@@ -21,7 +21,7 @@ def seq_read_fasta(gene):
     return new_seq
 
 
-def correct_names():
+def seq_len():
     new_dict = {"U5": 0, "ADA": 0, "FRAT1": 0, "FXN": 0, "RNU6_269P": 0}
     FOLDER = "/Users/carlosgfdez/PycharmProjects/2021-2022-PNE-Practices/Session-04/"
     for e in new_dict:
