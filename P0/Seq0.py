@@ -7,8 +7,8 @@ def valid_filename():
     condition = True
     while condition:
         try:
-            gene = input("What file do you want to open? ")
-            FOLDER = "./Sequences/"
+            gene = input("What gene information do you want to open? ")
+            FOLDER = "/Users/carlosgfdez/PycharmProjects/2021-2022-PNE-Practices/P0/Sequences/"
             f = open(FOLDER + gene + ".txt", "r")
             condition = False
             return f.read()
@@ -17,6 +17,5 @@ def valid_filename():
 
 
 def seq_read_fasta(gene):
-    text = open(gene, "r").read()
-    seq = seq[seq.find("\n"):].replace("\n", "")
-    return full_seq
+    new_seq = gene[gene.find("\n"):].replace("\n", "")
+    return new_seq
