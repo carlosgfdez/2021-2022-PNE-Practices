@@ -8,7 +8,7 @@ def valid_filename():
     while condition:
         try:
             gene = input("What gene information do you want to open? ")
-            FOLDER = "/Users/carlosgfdez/PycharmProjects/2021-2022-PNE-Practices/P0/Sequences/"
+            FOLDER = "/Users/carlosgfdez/PycharmProjects/2021-2022-PNE-Practices/Session-04/"
             f = open(FOLDER + gene + ".txt", "r")
             condition = False
             return f.read()
