@@ -34,7 +34,7 @@ def seq_len():
 
 def seq_count_base():
     bases_dict = {"U5": "", "ADA": "", "FRAT1": "", "FXN": "", "RNU6_269P": ""}
-    count_dict_U5 = {"U5": {}, "ADA": {}, "FRAT1": {}, "FXN": {}, "RNU6_269P": {}}
+    count_dict = {"U5": {}, "ADA": {}, "FRAT1": {}, "FXN": {}, "RNU6_269P": {}}
     FOLDER = "/Users/carlosgfdez/PycharmProjects/2021-2022-PNE-Practices/Session-04/"
     for e in bases_dict:
         f = open(FOLDER + e + ".txt", "r")
@@ -42,14 +42,12 @@ def seq_count_base():
         full_seq = sequence[sequence.find("\n"):].replace("\n", "")
         for element in full_seq:
             bases_dict[e] += element
-
-
     for d in bases_dict:
         for element in bases_dict[d]:
-            if element in count_dict_U5[d]:
-                count_dict_U5[d][element] += 1
+            if element in count_dict[d]:
+                count_dict[d][element] += 1
             else:
-                count_dict_U5[d][element] = 1
+                count_dict[d][element] = 1
 
-    return count_dict_U5
+    return count_dict
 
