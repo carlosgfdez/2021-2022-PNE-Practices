@@ -48,6 +48,22 @@ def seq_count_base():
                 count_dict[d][element] += 1
             else:
                 count_dict[d][element] = 1
-
     return count_dict
 
+def seq_count(): #ex4 and ex5 are made in the same way, the only difference is the way you print it
+    bases_dict = {"U5": "", "ADA": "", "FRAT1": "", "FXN": "", "RNU6_269P": ""}
+    count_dict = {"U5": {}, "ADA": {}, "FRAT1": {}, "FXN": {}, "RNU6_269P": {}}
+    FOLDER = "/Users/carlosgfdez/PycharmProjects/2021-2022-PNE-Practices/Session-04/"
+    for e in bases_dict:
+        f = open(FOLDER + e + ".txt", "r")
+        sequence = f.read()
+        full_seq = sequence[sequence.find("\n"):].replace("\n", "")
+        for element in full_seq:
+            bases_dict[e] += element
+    for d in bases_dict:
+        for element in bases_dict[d]:
+            if element in count_dict[d]:
+                count_dict[d][element] += 1
+            else:
+                count_dict[d][element] = 1
+    return count_dict
