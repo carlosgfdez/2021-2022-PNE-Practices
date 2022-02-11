@@ -67,3 +67,12 @@ def seq_count(): #ex4 and ex5 are made in the same way, the only difference is t
             else:
                 count_dict[d][element] = 1
     return count_dict
+
+def seq_reverse():
+    FOLDER = "/Users/carlosgfdez/PycharmProjects/2021-2022-PNE-Practices/Session-04/"
+    f = open(FOLDER + "U5" + ".txt", "r")
+    sequence = f.read()
+    full_seq = sequence[sequence.find("\n"):].replace("\n", "")
+    new_seq = full_seq[:20]
+    reversed_seq = new_seq[::-1]
+    return new_seq, reversed_seq
