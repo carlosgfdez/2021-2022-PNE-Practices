@@ -76,3 +76,21 @@ def seq_reverse():
     new_seq = full_seq[:20]
     reversed_seq = new_seq[::-1]
     return new_seq, reversed_seq
+
+def seq_complement():
+    FOLDER = "/Users/carlosgfdez/PycharmProjects/2021-2022-PNE-Practices/Session-04/"
+    f = open(FOLDER + "U5" + ".txt", "r")
+    complement_seq = ""
+    sequence = f.read()
+    full_seq = sequence[sequence.find("\n"):].replace("\n", "")
+    new_seq = full_seq[:20]
+    for e in new_seq:
+        if e == "A":
+            complement_seq += "T"
+        elif e == "T":
+            complement_seq += "A"
+        elif e == "C":
+            complement_seq += "G"
+        else:
+            complement_seq += "C"
+    return new_seq, complement_seq
