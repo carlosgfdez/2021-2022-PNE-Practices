@@ -1,3 +1,4 @@
-f = open("RNU6_269P.txt", "r")
-file = f.read()
-print(file[:file.find("\n")])
+from pathlib import Path
+file = "RNU6_269P.txt"
+text = Path(file).read_text()
+print(text[:text.find("\n")])
