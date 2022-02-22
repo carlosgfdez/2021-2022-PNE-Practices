@@ -17,33 +17,21 @@ def seq_read_fasta(gene):
     new_seq = gene[gene.find("\n"):].replace("\n", "")
     return new_seq
 
-def seq_len():
-    new_dict = {"U5": 0, "ADA": 0, "FRAT1": 0, "FXN": 0, "RNU6_269P": 0}
-    FOLDER = "../Session-04/"
-    for e in new_dict:
-        f = open(FOLDER + e + ".txt", "r")
-        sequence = f.read()
-        full_seq = sequence[sequence.find("\n"):].replace("\n", "")
-        for element in full_seq:
-            new_dict[e] += len(element)
+def seq_len(text):
+    new_dict = {"Length": 0}
+    sequence = text
+    for element in sequence:
+        new_dict["Length"] += len(element)
     return new_dict
 
-def seq_count_base():
-    bases_dict = {"U5": "", "ADA": "", "FRAT1": "", "FXN": "", "RNU6_269P": ""}
-    count_dict = {"U5": {}, "ADA": {}, "FRAT1": {}, "FXN": {}, "RNU6_269P": {}}
-    FOLDER = "../Session-04/"
-    for e in bases_dict:
-        f = open(FOLDER + e + ".txt", "r")
-        sequence = f.read()
-        full_seq = sequence[sequence.find("\n"):].replace("\n", "")
-        for element in full_seq:
-            bases_dict[e] += element
-    for d in bases_dict:
-        for element in bases_dict[d]:
-            if element in count_dict[d]:
-                count_dict[d][element] += 1
-            else:
-                count_dict[d][element] = 1
+def seq_count_base(text, letter):
+    count_dict = {letter: 0}
+    sequence = text
+    for element in sequence:
+        if element == letter:
+            count_dict[letter] += 1
+        else:
+            pass
     return count_dict
 
 def seq_count(): #ex4 and ex5 are made in the same way, the only difference is the way you print it
@@ -65,22 +53,16 @@ def seq_count(): #ex4 and ex5 are made in the same way, the only difference is t
     return count_dict
 
 def seq_reverse(text):
-    FOLDER = "../Session-04/"
-    f = open(FOLDER + text + ".txt", "r")
-    sequence = f.read()
-    full_seq = sequence[sequence.find("\n"):].replace("\n", "")
-    new_seq = full_seq[:20]
+    sequence = text
+    new_seq = sequence[:20]
     reversed_seq = new_seq[::-1]
     return new_seq, reversed_seq
 
 
 def seq_complement(text):
-    FOLDER = "../Session-04/"
-    f = open(FOLDER + text + ".txt", "r")
     complement_seq = ""
-    sequence = f.read()
-    full_seq = sequence[sequence.find("\n"):].replace("\n", "")
-    new_seq = full_seq[:20]
+    sequence = text
+    new_seq = sequence[:20]
     for e in new_seq:
         if e == "A":
             complement_seq += "T"
