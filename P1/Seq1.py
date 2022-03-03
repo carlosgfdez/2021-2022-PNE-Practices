@@ -100,3 +100,13 @@ class Seq:
                     compl_seq += "C"
         return compl_seq
 
+    def read_fasta(self, filename):
+        from pathlib import Path
+
+        file_contents = Path(filename).read_text()
+        lines = file_contents.splitlines()
+        body = lines[1:]
+        self.strbases = ""
+        for lines in body:
+            self.strbases += lines
+
