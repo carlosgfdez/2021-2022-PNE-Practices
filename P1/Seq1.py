@@ -75,3 +75,12 @@ class Seq:
             for e in self.strbases:
                 bases_dict[e] += 1
             return bases_dict
+
+    def reverse(self):
+        reversed_seq = ""
+        if self.strbases == "NULL" or self.strbases == "ERROR":
+            reversed_seq = self.strbases
+        else:
+            reversed_seq = self.strbases[::-1]
+        return reversed_seq
+
