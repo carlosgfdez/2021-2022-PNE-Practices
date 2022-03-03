@@ -84,3 +84,19 @@ class Seq:
             reversed_seq = self.strbases[::-1]
         return reversed_seq
 
+    def complement(self):
+        compl_seq = ""
+        if self.strbases == "NULL" or self.strbases == "ERROR":
+            compl_seq = self.strbases
+        else:
+            for e in self.strbases:
+                if e == "A":
+                    compl_seq += "T"
+                elif e == "T":
+                    compl_seq += "A"
+                elif e == "C":
+                    compl_seq += "G"
+                else:
+                    compl_seq += "C"
+        return compl_seq
+
