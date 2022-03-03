@@ -115,6 +115,6 @@ class Seq:
         count_A, count_C, count_G, count_T = self.count_base()
         counts = [count_A, count_C, count_G, count_T]
         zipped = zip(counts, bases)
-        u2 = max(zipped)
-        return u2
+        maximum = max(zipped)
+        return maximum
 

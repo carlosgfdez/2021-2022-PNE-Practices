@@ -5,5 +5,5 @@ for f in list_genes:
     filename = FOLDER + f
     s1 = Seq()
     s1.read_fasta(filename)
-    u2 = s1.frequent_base()
-    print("gen", f,":", "most frequent base -->", u2[1])
+    maximum = s1.frequent_base()
+    print("gen", f,":", "most frequent base -->", maximum[1])
