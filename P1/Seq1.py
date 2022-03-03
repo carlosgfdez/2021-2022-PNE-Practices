@@ -48,7 +48,7 @@ class Seq:
         else:
             return len(self.strbases)
 
-    def seq_count_base(self):
+    def count_base(self):
         count_A = 0
         count_T = 0
         count_C = 0
@@ -109,4 +109,12 @@ class Seq:
         self.strbases = ""
         for lines in body:
             self.strbases += lines
+
+    def frequent_base(self):
+        bases = ["A", "C", "G", "T"]
+        count_A, count_C, count_G, count_T = self.count_base()
+        counts = [count_A, count_C, count_G, count_T]
+        zipped = zip(counts, bases)
+        u2 = max(zipped)
+        return u2
 
