@@ -47,3 +47,31 @@ class Seq:
             return new_len
         else:
             return len(self.strbases)
+
+    def seq_count_base(self):
+        count_A = 0
+        count_T = 0
+        count_C = 0
+        count_G = 0
+        if self.strbases == "NULL" or self.strbases == "ERROR":
+            pass
+        else:
+            for e in self.strbases:
+                if e == "A":
+                    count_A += 1
+                elif e == "T":
+                    count_T += 1
+                elif e == "C":
+                    count_C += 1
+                else:
+                    count_G += 1
+        return count_A, count_T, count_C, count_G
+
+    def count(self):
+        bases_dict = {"A": 0, "T": 0, "C": 0, "G": 0}
+        if self.strbases == "NULL" or self.strbases == "ERROR":
+            return bases_dict
+        else:
+            for e in self.strbases:
+                bases_dict[e] += 1
+            return bases_dict
