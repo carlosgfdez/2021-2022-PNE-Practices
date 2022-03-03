@@ -1,4 +1,5 @@
 from Seq1 import Seq
+print("-----| Practice 1, Exercise 6 |------")
 
 s1 = Seq()
 s2 = Seq("ACTGA")
