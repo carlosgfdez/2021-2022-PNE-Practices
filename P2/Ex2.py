@@ -5,10 +5,9 @@ EXERCISE = 2
 
 print(f"-----| Practice {PRACTICE}, Exercise {EXERCISE} |------")
 
-IP = "127.0.0.1"
-PORT = 9000
+ip = "127.0.0.1"
+port = 9000
 
-c = Client(IP, PORT)
-c.ping()
+c = Client(ip, port)
 
 print(c)
