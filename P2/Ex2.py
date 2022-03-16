@@ -9,5 +9,4 @@ ip = "127.0.0.1"
 port = 9000
 
 c = Client(ip, port)
-
 print(c)
