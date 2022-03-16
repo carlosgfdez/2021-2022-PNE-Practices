@@ -3,8 +3,9 @@ PRACTICE = 2
 EXERCISE = 2
 print(f"-----| Practice {PRACTICE}, Exercise {EXERCISE} |------")
 
-IP = "localhost"
-PORT = 8080
+IP = "127.0.0.1"
+PORT = 9000
 
 c = Client(IP, PORT)
+c.ping()
 print(c)
