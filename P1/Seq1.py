@@ -117,4 +117,3 @@ class Seq:
         zipped = zip(counts, bases)
         maximum = max(zipped)
         return maximum
-
