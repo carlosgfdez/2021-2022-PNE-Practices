@@ -24,3 +24,14 @@ class Client:
         s.close()
         # Return the response
         return response
+
+    def send_seq(self):
+        new_dict = {"U5": "", "FRAT1": "", "ADA": ""}
+        FOLDER = "../Session-04/"
+        for e in new_dict:
+            f = open(FOLDER + e + ".txt", "r")
+            sequence = f.read()
+            full_seq = sequence[sequence.find("\n"):].replace("\n", "")
+            for element in full_seq:
+                new_dict[e] += element
+        return new_dict
