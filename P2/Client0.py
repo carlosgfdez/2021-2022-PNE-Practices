@@ -35,3 +35,13 @@ class Client:
             for element in full_seq:
                 new_dict[e] += element
         return new_dict
+
+    def seq_frag(self):
+        seq_info = ""
+        FOLDER = "../Session-04/"
+        f = open(FOLDER + "FRAT1.txt", "r")
+        sequence = f.read()
+        full_seq = sequence[sequence.find("\n"):].replace("\n", "")
+        for element in full_seq:
+            seq_info += element
+        return seq_info
