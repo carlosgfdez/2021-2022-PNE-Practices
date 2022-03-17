@@ -25,6 +25,7 @@ class Client:
         # Return the response
         return response
 
+
     def send_seq(self):
         new_dict = {"U5": "", "FRAT1": "", "ADA": ""}
         FOLDER = "../Session-04/"
