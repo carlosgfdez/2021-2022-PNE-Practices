@@ -44,7 +44,7 @@ while True:
 
     # -- Execute this part if there are no errors
     else:
-        print(f"CONNECTION {i}. Client IP, PORT:({IP}, {PORT})")
+        print(f"CONNECTION {i}. Client IP, PORT:{client_ip_port}")
 
         # -- Read the message from the client
         # -- The received message is in raw bytes
