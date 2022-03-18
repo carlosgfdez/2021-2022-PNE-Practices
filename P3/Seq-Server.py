@@ -3,7 +3,7 @@ import colorama
 
 # Configure the Server's IP and PORT
 PORT = 8080 #6123 always work
-IP = "localhost" #you could just write localhost
+IP = "127.0.0.1" #you could just write localhost
 
 # -- Step 1: create the socket
 ls = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -98,7 +98,7 @@ while True:
             print(colorama.Fore.GREEN + color_txt + colorama.Fore.WHITE)
             response = "OK!\n"
 
-        elif cmd == "REV"
+        elif cmd == "REV":
             response = arg[::-1]
 
         else:
