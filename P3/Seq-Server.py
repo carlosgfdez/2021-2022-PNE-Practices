@@ -41,7 +41,7 @@ try:
             bases = slices [1]
             seq = Seq(bases)
 
-            response = f"{seq.info()}"
+            response = f"{seq.count()}"
 
         elif command == "COMP":
             bases = slices[1]
