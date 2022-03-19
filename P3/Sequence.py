@@ -117,3 +117,12 @@ class Seq:
         zipped = zip(counts, bases)
         maximum = max(zipped)
         return maximum
+
+    def info(self):
+        result = f"Sequence: {self.bases}\n"
+        result += f"Total length: {self.len()}\n"
+
+        d = self.count()
+        for base, count in d.items(): # es lo mismo que poner self.count().items():
+            result += f"{base}: {count} ({(count * 100) / self.len()}%)\n"
+        return result

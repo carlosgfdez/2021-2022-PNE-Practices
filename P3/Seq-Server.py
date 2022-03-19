@@ -34,6 +34,33 @@ try:
             seq = Seq()
             file_name = os.path.join("..", "Genes", f"{gene}.txt")
             seq.read_fasta(file_name)
+
+            response = f"{seq}\n"
+
+        elif command == "INFO":
+            bases = slices [1]
+            seq = Seq(bases)
+
+            response = f"{seq.info()}"
+
+        elif command == "COMP":
+            bases = slices[1]
+            seq = Seq(bases)
+
+            response = f"{seq.complement()}\n"
+
+        elif command == "REV":
+            bases = slices[1]
+            seq = Seq(bases)
+
+            response = f"{seq.reverse()}\n"
+
+        elif command == "GENE":
+            gene = slices[1]
+            seq = Seq()
+            file_name = os.path.join("..", "Genes", f"{gene}.txt")
+            seq.read_fasta(file_name)
+
             response = f"{seq}\n"
 
         print(response)
