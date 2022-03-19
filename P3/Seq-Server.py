@@ -1,81 +1,50 @@
 import socket
-import colorama
+import termcolor
+import os #Operative System
+from Sequence import Seq
 
-# Configure the Server's IP and PORT
-PORT = 8080 #6123 always work
-IP = "127.0.0.1" #you could just write localhost
+IP = "127.0.0.1" # "127.0.0.1"  o "localhost"
+# para la máquina en la que se ejecuta, si se intenta desde otra hace falta poner el de dicha maquina (192....)
+PORT = 8080
+GENES = ["ADA", "FRAT1", "FXN", "RNU6_29P", "U5"]
 
-# -- Step 1: create the socket
-ls = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# -- Optional: This is for avoiding the problem of Port already in use
-ls.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  #addresses can be reused
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
-# -- Step 2: Bind the socket to server's IP and PORT
-ls.bind((IP, PORT))
+try:
+    server_socket.bind((IP, PORT))
+    server_socket.listen()
 
-# -- Step 3: Configure the socket for listening
-ls.listen()
+    print("SEQ Server configured!")
 
-print("The server is configured!")
+    while True:
+        print(f"Waiting for Clients...")
+        (client_socket, client_address) = server_socket.accept()
+        request_bytes = client_socket.recv(2048)
+        request = request_bytes.decode("utf-8")
+        slices = request.split(" ")
+        command = slices[0]
+        termcolor.cprint(f"{command}", 'green')
+        if command == "PING":
+            response = f"OK!\n"
 
-
-while True:
-    # -- Waits for a client to connect
-    print("Waiting for Clients to connect...")
-    try:
-        (cs, client_ip_port) = ls.accept()
-        # -- Server stopped manually
-    except KeyboardInterrupt:
-        print("Server stopped by the user")
-
-        # -- Close the listening socket
-        ls.close()
-
-        # -- Exit!
-        exit()
-
-    # -- Execute this part if there are no errors
-
-    else:
-
-        print("A client has connected to the server!")
-
-        # -- Read the message from the client
-        # -- The received message is in raw bytes
-        msg_raw = cs.recv(2048)
-
-        # -- We decode it for converting it
-        # -- into a human-redeable string
-        msg = msg_raw.decode().replace("\n", "").strip() #strip para quitar los espacios de la izq y de la derecha
-        splitted_command = msg.split(" ")
-        cmd = splitted_command[0]
-        #arg = msg.split(' ')[1] #if we are not using the msg again we can just do the slipt after the strip
-        if cmd != "PING":
-            arg = splitted_command[1]
-            #print(arg)
-        #print(cmd)
-
-        # -- Print the received message
-        #print(f"Message received: {msg}")
-
-        # -- Send a response message to the client
-        if msg == "PING":
-            color_txt = "PING command! "
-            #print(color_txt)
-            colorama.init()
-            print(colorama.Fore.GREEN + color_txt + colorama.Fore.WHITE)
-            response = "OK!\n"
-
-        elif cmd == "REV":
-            response = arg[::-1]
-
-        else:
-            response = "HELLO. I am the Server :-)\n"
+        elif command == "GET":
+            genes_number = int(slices[1])
+            gene = GENES[genes_number]
+            seq = Seq()
+            file_name = os.path.join("..", "Genes", f"{gene}.txt")
+            seq.read_fasta(file_name)
+            response = f"{seq}\n"
 
         print(response)
+        response_bytes = str.encode(response)
+        client_socket.send(response_bytes)
 
-        # -- The message has to be encoded into bytes
-        cs.send(response.encode())
 
-        # -- Close the data socket
-        cs.close()
+        client_socket.close()
+
+except socket.error:
+    print(f"Problems using port {PORT}. Do you have permission?")
+except KeyboardInterrupt:
+    print("Server stopped by the admin")
+    server_socket.close()
