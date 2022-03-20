@@ -31,16 +31,17 @@ class Client:
 
         client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         client_socket.connect((self.ip, self.port))
-
         print("To Server: ", end="")
         termcolor.cprint(msg, 'green')
         msg_bytes = str.encode(msg)
         client_socket.send(msg_bytes)
 
+        print("From Server: ", end="")
+
         response_bytes = client_socket.recv(2048)
         response = response_bytes.decode("utf-8")
-        print("From Server: ", end="")
         termcolor.cprint(response, 'green')
+
         client_socket.close()
         return response
 

@@ -76,6 +76,7 @@ class Seq:
                 bases_dict[e] += 1
             return bases_dict
 
+
     def reverse(self):
         reversed_seq = ""
         if self.strbases == "NULL" or self.strbases == "ERROR":
@@ -119,7 +120,7 @@ class Seq:
         return maximum
 
     def info(self):
-        result = f"Sequence: {self.bases}\n"
+        result = f"Sequence: {self.count()}\n"
         result += f"Total length: {self.len()}\n"
 
         d = self.count()
