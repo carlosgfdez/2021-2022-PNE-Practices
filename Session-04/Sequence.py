@@ -1,6 +1,12 @@
 from pathlib import Path
-file = "ADA.txt"
-text = Path(file).read_text()
+file = input("Enter the name of a file: ")
 
-full_seq = text[text.find("\n"):].replace("\n", "")
-print("The total number of bases in ADA.txt is", len(full_seq))
+try:
+    file_contents = Path(file).read_text().replace("\n", "")
+    content_length = len(file_contents)
+    print(f"The total number of bases in the {file} file is: {content_length}")
+
+except FileNotFoundError:
+    print(f"[ERROR]: file '{file}' not found")
+except IndexError:
+    print(f"[ERROR]: file '{file}' is empty")
