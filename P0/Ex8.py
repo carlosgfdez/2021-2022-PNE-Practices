@@ -1,5 +1,12 @@
-import Seq0
-print("----| Exercise 8 |----")
-count_dict_2 = Seq0.frequent_base()
-for d in count_dict_2:
-    print("Gene", d, "most frequent base:", count_dict_2[d][1])
+from Seq0 import *
+
+print("----| Practice 0, Exercise 8 |----")
+
+FOLDER = "../Session-04/"
+GENES = ["ADA", "FRAT1", "FXN", "RNU6_269P", "U5"]
+
+for gene in GENES:  # gene = "ADA"
+    filename = gene + ".txt"  # filename = "ADA.txt"
+    sequence = seq_read_fasta(FOLDER + filename)  # "../Session-04/ADA.txt"
+    print(f"Gene {gene}: Most frequent Base: {most_frequent_base(sequence)}")
+

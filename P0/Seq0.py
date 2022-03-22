@@ -1,117 +1,60 @@
+BASES = ["A", "C", "T", "G"]
+COMPLEMENTS = {"A": "T", "T": "A", "C": "G", "G": "C"}
+
+
 def seq_ping():
-    print("Ok")
-
-def valid_filename():
-    condition = True
-    while condition:
-        try:
-            gene = input("What gene information do you want to open? ")
-            FOLDER = "../Session-04/"
-            f = open(FOLDER + gene + ".txt", "r")
-            condition = False
-            return f.read()
-        except FileNotFoundError:
-            print("That file couldn't be found")
-
-def seq_read_fasta(gene):
-    new_seq = gene[gene.find("\n"):].replace("\n", "")
-    return new_seq
-
-def seq_len():
-    new_dict = {"U5": 0, "ADA": 0, "FRAT1": 0, "FXN": 0, "RNU6_269P": 0}
-    FOLDER = "../Session-04/"
-    for e in new_dict:
-        f = open(FOLDER + e + ".txt", "r")
-        sequence = f.read()
-        full_seq = sequence[sequence.find("\n"):].replace("\n", "")
-        for element in full_seq:
-            new_dict[e] += len(element)
-    return new_dict
-
-def seq_count_base():
-    bases_dict = {"U5": "", "ADA": "", "FRAT1": "", "FXN": "", "RNU6_269P": ""}
-    count_dict = {"U5": {}, "ADA": {}, "FRAT1": {}, "FXN": {}, "RNU6_269P": {}}
-    FOLDER = "../Session-04/"
-    for e in bases_dict:
-        f = open(FOLDER + e + ".txt", "r")
-        sequence = f.read()
-        full_seq = sequence[sequence.find("\n"):].replace("\n", "")
-        for element in full_seq:
-            bases_dict[e] += element
-    for d in bases_dict:
-        for element in bases_dict[d]:
-            if element in count_dict[d]:
-                count_dict[d][element] += 1
-            else:
-                count_dict[d][element] = 1
-    return count_dict
-
-def seq_count(): #ex4 and ex5 are made in the same way, the only difference is the way you print it
-    bases_dict = {"U5": "", "ADA": "", "FRAT1": "", "FXN": "", "RNU6_269P": ""}
-    count_dict = {"U5": {}, "ADA": {}, "FRAT1": {}, "FXN": {}, "RNU6_269P": {}}
-    FOLDER = "../Session-04/"
-    for e in bases_dict:
-        f = open(FOLDER + e + ".txt", "r")
-        sequence = f.read()
-        full_seq = sequence[sequence.find("\n"):].replace("\n", "")
-        for element in full_seq:
-            bases_dict[e] += element
-    for d in bases_dict:
-        for element in bases_dict[d]:
-            if element in count_dict[d]:
-                count_dict[d][element] += 1
-            else:
-                count_dict[d][element] = 1
-    return count_dict
-
-def seq_reverse(text):
-    FOLDER = "../Session-04/"
-    f = open(FOLDER + text + ".txt", "r")
-    sequence = f.read()
-    full_seq = sequence[sequence.find("\n"):].replace("\n", "")
-    new_seq = full_seq[:20]
-    reversed_seq = new_seq[::-1]
-    return new_seq, reversed_seq
+    print("OK")
 
 
-def seq_complement(text):
-    FOLDER = "../Session-04/"
-    f = open(FOLDER + text + ".txt", "r")
-    complement_seq = ""
-    sequence = f.read()
-    full_seq = sequence[sequence.find("\n"):].replace("\n", "")
-    new_seq = full_seq[:20]
-    for e in new_seq:
-        if e == "A":
-            complement_seq += "T"
-        elif e == "T":
-            complement_seq += "A"
-        elif e == "C":
-            complement_seq += "G"
-        else:
-            complement_seq += "C"
-    return new_seq, complement_seq
+def seq_read_fasta(filename):
+    from pathlib import Path
 
-def frequent_base():
-    bases_dict = {"U5": "", "ADA": "", "FRAT1": "", "FXN": "", "RNU6_269P": ""}
-    count_dict = {"U5": {}, "ADA": {}, "FRAT1": {}, "FXN": {}, "RNU6_269P": {}}
-    count_dict_2 = {"U5": [0, ""], "ADA": [0, ""], "FRAT1": [0, ""], "FXN": [0, ""], "RNU6_269P": [0, ""]}
-    FOLDER = "../Session-04/"
-    for e in bases_dict:
-        f = open(FOLDER + e + ".txt", "r")
-        sequence = f.read()
-        full_seq = sequence[sequence.find("\n"):].replace("\n", "")
-        for element in full_seq:
-            bases_dict[e] += element
-    for d in bases_dict:
-        for element in bases_dict[d]:
-            if element in count_dict[d]:
-                count_dict[d][element] += 1
-            else:
-                count_dict[d][element] = 1
-    for d in count_dict:
-        for element in count_dict[d]:
-            if count_dict[d][element] > count_dict_2[d][0]:
-                count_dict_2[d][0] = count_dict[d][element]
-                count_dict_2[d][1] = element
-    return count_dict_2
+    file_contents = Path(filename).read_text()
+    lines = file_contents.splitlines()
+    body = lines[1:]  # list[str]
+    sequence = ""
+    for line in body:
+        sequence += line
+    return sequence
+
+
+def seq_len(seq):
+    return len(seq)
+
+
+def seq_count_base(seq, base):
+    # total = 0
+    # for b in seq:
+    #    if b == base:
+    #        total += 1
+    # return total
+    return seq.count(base)
+
+
+def seq_count(seq):
+    result = {}
+    for base in BASES:  # base = "A"
+        result[base] = seq_count_base(seq, base)
+    return result
+
+
+def seq_reverse(seq):
+    return seq[::-1]
+
+
+def seq_complement(seq):  # seq = "ATTCG"
+    result = ""
+    for base in seq:  # base = "G"
+        result += COMPLEMENTS[base]  # result = "TAAGC"
+    return result
+
+
+def most_frequent_base(seq):  # seq = "ATTCG"
+    max_base = None  # "T"
+    max_count = 0  # 2
+    for base, count in seq_count(seq).items():  # {"A": 1, "C": 1, "G": 1, "T": 2}
+        if count >= max_count:
+            max_base = base
+            max_count = count
+    return max_base
+

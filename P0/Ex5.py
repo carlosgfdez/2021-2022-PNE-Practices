@@ -1,5 +1,12 @@
-import Seq0
-count_dict = Seq0.seq_count()
-print("----| Exercise 5 |----")
-for d in count_dict:
-    print("Gene", d, ":", count_dict[d])
+from Seq0 import *
+
+print("----| Practice 0, Exercise 5 |----")
+
+FOLDER = "../Session-04/"
+GENES = ["ADA", "FRAT1", "FXN", "RNU6_269P", "U5"]
+
+for gene in GENES:  # gene = "ADA"
+    filename = gene + ".txt"  # filename = "ADA.txt"
+    sequence = seq_read_fasta(FOLDER + filename)  # "../Session-04/ADA.txt"
+    print(f"Gene {gene}: {seq_count(sequence)}")
+

@@ -1,5 +1,11 @@
-import Seq0
-gene = Seq0.valid_filename()
-sequence = Seq0.seq_read_fasta(gene)
+from Seq0 import *
+print("----| Practice 0, Exercise 2 |----")
+FOLDER = "../Session-04/"
+
+filename = input("File's name: ")
+
+print(f"DNA file: {filename}")
+sequence = seq_read_fasta(FOLDER + filename)
 print("The first 20 bases are:")
-print(sequence[0:20])
+print(sequence[:20])
+

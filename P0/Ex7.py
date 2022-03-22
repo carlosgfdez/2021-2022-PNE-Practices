@@ -1,6 +1,13 @@
-import Seq0
-new_seq, complement_seq = Seq0.seq_complement("U5")
-print("----| Exercise 7 |----")
-print("Gene U5:")
-print("Frag:", new_seq)
-print("Comp:", complement_seq)
+from Seq0 import *
+
+print("----| Practice 0, Exercise 6 |----")
+
+FOLDER = "../Session-04/"
+GENES = ["ADA", "FRAT1", "FXN", "RNU6_269P", "U5"]
+
+for gene in GENES:  # gene = "ADA"
+    filename = gene + ".txt"  # filename = "ADA.txt"
+    sequence = seq_read_fasta(FOLDER + filename)  # "../Session-04/ADA.txt"
+    print(f"Gene {gene}:")
+    print(f"Frag: {sequence[:20]}")
+    print(f"Rev:  {seq_complement(sequence[:20])}\n")
