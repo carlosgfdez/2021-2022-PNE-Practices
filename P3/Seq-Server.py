@@ -45,7 +45,7 @@ try:
             bases = slices [1]
             sequence = Seq(bases)
 
-            response = f"{sequence.info()}"
+            response = f"{sequence.info()}\n"
 
         elif command == "COMP":
             bases = slices[1]
