@@ -1,119 +1,68 @@
 class Seq:
-    """A class for representing sequences"""
-    def __init__(self, strbases="NULL"):
-        self.strbases = strbases
-        if strbases == "NULL":
-            print("NULL sequence created")
-            self.strbases = "NULL"
-        elif not self.valid_sequence():
-            print("INVALID Seq!")
-            self.strbases = "ERROR"
-        else:
+    BASES_ALLOWED = ['A', 'C', 'G', 'T']
+    BASES_COMPLEMENTS = {"A": "T", "C": "G", "T": "A", "G": "C"}
+
+    @staticmethod
+    def are_bases_ok(bases):
+        ok = len(bases) != 0
+        i = 0
+        while ok and i < len(bases):
+            if bases[i] not in Seq.BASES_ALLOWED:
+                ok = False
+            i += 1
+        return ok
+
+    def __init__(self, bases="NULL"):
+        if bases == "NULL":
+            self.bases = bases
+            print("NULL sequence created!")
+        elif Seq.are_bases_ok(bases):
+            self.bases = bases
             print("New sequence created!")
-            self.strbases = strbases
-
-    @staticmethod  # the function is expecting a normal argument
-    def valid_sequence2(sequence):
-        valid = True
-        i = 0
-        while i < len(sequence):
-            c = sequence[i]
-            if c != "A" and c != "C" and c != "G" and c != "T":
-                valid = False
-            i += 1
-        return valid
-
-    def valid_sequence(self):
-        valid = True
-        i = 0
-        while i < len(self.strbases):
-            c = self.strbases[i]
-            if c != "A" and c != "C" and c != "G" and c != "T":
-                valid = False
-            i += 1
-        return valid
+        else:
+            self.bases = "ERROR"
+            print("INVALID sequence detected!")
 
     def __str__(self):
-        """Method called when the object is being printed"""
-
-        # -- We just return the string with the sequence
-        return self.strbases
+        return self.bases
 
     def len(self):
-        """Calculate the length of the sequence"""
-        new_len = ""
-        if self.strbases == "NULL" or self.strbases == "ERROR":
-            new_len = 0
-            return new_len
-        else:
-            return len(self.strbases)
+        if self.bases == "NULL" or self.bases == "ERROR":
+            return 0
+        return len(self.bases)
 
-    def count_base(self):
-        count_A = 0
-        count_T = 0
-        count_C = 0
-        count_G = 0
-        if self.strbases == "NULL" or self.strbases == "ERROR":
-            pass
-        else:
-            for e in self.strbases:
-                if e == "A":
-                    count_A += 1
-                elif e == "T":
-                    count_T += 1
-                elif e == "C":
-                    count_C += 1
-                else:
-                    count_G += 1
-        return count_A, count_T, count_C, count_G
+    def count_base(self, base):
+        if self.bases == "NULL" or self.bases == "ERROR":
+            return 0
+        return self.bases.count(base)
 
     def count(self):
-        bases_dict = {"A": 0, "T": 0, "C": 0, "G": 0}
-        if self.strbases == "NULL" or self.strbases == "ERROR":
-            return bases_dict
-        else:
-            for e in self.strbases:
-                bases_dict[e] += 1
-            return bases_dict
+        result = {}
+        for base in Seq.BASES_ALLOWED:
+            result[base] = self.count_base(base)
+        return result
 
     def reverse(self):
-        reversed_seq = ""
-        if self.strbases == "NULL" or self.strbases == "ERROR":
-            reversed_seq = self.strbases
-        else:
-            reversed_seq = self.strbases[::-1]
-        return reversed_seq
+        if self.bases == "NULL" or self.bases == "ERROR":
+            return self.bases
+        return self.bases[::-1]
 
     def complement(self):
-        compl_seq = ""
-        if self.strbases == "NULL" or self.strbases == "ERROR":
-            compl_seq = self.strbases
-        else:
-            for e in self.strbases:
-                if e == "A":
-                    compl_seq += "T"
-                elif e == "T":
-                    compl_seq += "A"
-                elif e == "C":
-                    compl_seq += "G"
-                else:
-                    compl_seq += "C"
-        return compl_seq
+        if self.bases == "NULL" or self.bases == "ERROR":
+            return self.bases
 
-    def read_fasta(self, filename):
+        result = ""
+        for base in self.bases:
+            result += Seq.BASES_COMPLEMENTS[base]
+        return result
+
+    def read_fasta(self, file_name):
         from pathlib import Path
 
-        file_contents = Path(filename).read_text()
+        file_contents = Path(file_name).read_text()
         lines = file_contents.splitlines()
         body = lines[1:]
-        self.strbases = ""
-        for lines in body:
-            self.strbases += lines
+        self.bases = ""
+        for line in body:
+            self.bases += line
 
-    def frequent_base(self):
-        bases = ["A", "C", "G", "T"]
-        count_A, count_C, count_G, count_T = self.count_base()
-        counts = [count_A, count_C, count_G, count_T]
-        zipped = zip(counts, bases)
-        maximum = max(zipped)
-        return maximum

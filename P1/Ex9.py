@@ -1,4 +1,7 @@
 from Seq1 import Seq
+
+print("-----| Practice 1, Exercise 9 |------")
+
 s1 = Seq()
 s1.read_fasta("../Session-04/U5.txt")
 
