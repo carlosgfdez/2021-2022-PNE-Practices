@@ -130,7 +130,7 @@ class Seq:
 
     def mult(self):
         if self.strbases == "NULL" or self.strbases == "ERROR":
-            mult_result = self.strbases
+            mult_result = "We could not multiply the bases since the sequence is not correct"
         else:
             mult_result = 1
             for e in self.strbases:
