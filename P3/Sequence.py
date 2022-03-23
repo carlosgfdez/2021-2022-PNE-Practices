@@ -127,3 +127,19 @@ class Seq:
         for base, count in d.items(): # es lo mismo que poner self.count().items():
             result += f"{base}: {count} ({(count * 100) / self.len()}%)\n"
         return result
+
+    def mult(self):
+        if self.strbases == "NULL" or self.strbases == "ERROR":
+            mult_result = self.strbases
+        else:
+            mult_result = 1
+            for e in self.strbases:
+                if e == "A":
+                    mult_result = mult_result * 2
+                elif e == "T":
+                    mult_result = mult_result * 5
+                elif e == "C":
+                    mult_result = mult_result * (-1)
+                else:
+                    mult_result = mult_result * 3
+        return mult_result

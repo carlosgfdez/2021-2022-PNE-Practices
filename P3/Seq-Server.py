@@ -67,6 +67,12 @@ try:
 
             response = f"{sequence}\n"
 
+        elif command == "MULT":
+            bases = slices[1]
+            sequence = Seq(bases)
+
+            response = f"{sequence.mult()}\n"
+
         print(response)
         response_bytes = str.encode(response)
         client_socket.send(response_bytes)
