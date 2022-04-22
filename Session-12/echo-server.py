@@ -7,7 +7,6 @@ PORT = 8080
 
 
 def process_client(client_socket):
-    # -- Receive the request message
     request_bytes = client_socket.recv(2048)
     request = request_bytes.decode()
 
@@ -23,7 +22,7 @@ server_socket.listen()
 
 print("SEQ Server configured!")
 
-# --- MAIN
+# --- MAIN LOOP
 try:
     while True:
         print("Waiting for clients...")
