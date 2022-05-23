@@ -17,7 +17,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
         termcolor.cprint(self.requestline, 'green')
 
         if self.path == "/":
-            contents = Path("form-3.html").read_text()
+            contents = Path("form-4.html").read_text()
             self.send_response(200)
         elif self.path == "/ping?":
             contents = f"""
@@ -88,6 +88,46 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 self.send_response(404)
 
 
+        elif self.path.startswith("/operate?"):
+            content_1 = self.path.split("?")[1]
+            content_2 = content_1.split("=")[1]
+            sequence_gene = content_2.split("&")[0]
+
+
+            try:
+                sequence = Seq(sequence_gene)
+                if 'info' in self.path:
+                    task = 'info'
+                    text = f"<p>{sequence.info()}</p>"
+                elif 'comp' in self.path:
+                    task = 'complement'
+                    text = f"<p>{sequence.complement()}</p>"
+                elif 'reverse' in self.path:
+                    task = 'rev'
+                    text = f"<p>{sequence.reverse()}</p>"
+
+                contents = f"""
+                    <!DOCTYPE html>
+                    <html lang="en">
+                        <head>
+                            <meta charset="utf-8">
+                            <title>GET</title>
+                        </head>
+                        <body>
+                            <h1>Sequence:</h1>
+                            <p>{sequence_gene}</p>
+                            <h1>Operation:</h1>
+                            <p>{task}</p>
+                            <h1>Result</h1>
+                            {text} 
+                            <a href="/">Main page</a>
+                        </body>
+                    </html>"""
+                
+                self.send_response(200)
+            except (IndexError, ValueError):
+                contents = Path(f"Error.html").read_text()
+                self.send_response(404)
         else:
             contents = Path(f"Error.html").read_text()
             self.send_response(404)

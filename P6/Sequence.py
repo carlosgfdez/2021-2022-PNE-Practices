@@ -120,12 +120,10 @@ class Seq:
         return maximum
 
     def info(self):
-        result = f"Sequence: {self.count()}\n"
-        result += f"Total length: {self.len()}\n"
-
+        result = f"Total length: {self.len()}<br><br>"
         d = self.count()
         for base, count in d.items(): # es lo mismo que poner self.count().items():
-            result += f"{base}: {count} ({(count * 100) / self.len()}%)\n"
+            result += f"{base}: {count} ({(count * 100) / self.len()}%)<br><br>"
         return result
 
     def mult(self):
