@@ -14,7 +14,7 @@ class Seq:
 
     @staticmethod  # the function is expecting a normal argument
     def valid_sequence2(sequence):
-        valid = True
+        valid = True1
         i = 0
         while i < len(sequence):
             c = sequence[i]
