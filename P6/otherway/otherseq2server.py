@@ -52,7 +52,7 @@ class MyHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             try:
                 gene_name = params['gene_name'][0]
                 sequence = Seq()
-                file_name = os.path.join("..", "Genes", f"{gene_name}.txt")
+                file_name = os.path.join("../..", "Genes", f"{gene_name}.txt")
                 sequence.read_fasta(file_name)
                 contents = read_html_file(path[1:] + ".html"). \
                     render(context={'gene_name': gene_name, 'sequence': sequence})
