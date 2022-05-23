@@ -5,7 +5,6 @@ import termcolor
 from pathlib import Path
 from Sequence import Seq
 
-
 PORT = 8080
 
 socketserver.TCPServer.allow_reuse_address = True
