@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>SEQ2 SERVER</title>
+  </head>
+  <body>
+    <h1>SEQ2 SERVER</h1>
+    <form action="ping" method="get">
+      <p>Access to the server:<p/>
+      <hr>
+      <p>Is the server alive?</p>
+      <input type="submit" value="PING">
+          </form>
+
+      <hr>
+      <form action="get" method="get">
+      <p>Get a sequence. Select a sequence number</p>
+      <select name="sequence_number">
+        <option value="0">0</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+      <input type="submit" value="GET">
+      </form>
+
+    <hr>
+      <form action="gene" method="get">
+            <p>Get a gene. Select a name</p>
+          <select name="sequence_gene">
+            <option value="U5">U5</option>
+            <option value="ADA">ADA</option>
+            <option value="FRAT1">FRAT1</option>
+            <option value="FXN">FXN</option>
+            <option value="RNU6_269P">RNU6_269P</option>
+          <input type="submit" value="GENE">
+          </form>
+
+  <hr>
+      <form action="operate" method="get">
+        Write a sentence:
+      <input type="text" name="msg">
+        <br>
+      Check button:
+      <input type="checkbox" name="chk">
+        Select operation:
+      <input type="operation" name="task" value="info" checked> Info
+      <input type="operation" name="task" value="comp"> Comp
+      <input type="operation" name="task" value="rev"> Rev
+          <input type="submit" value="OPERATE">
+          </form>
+  </body>
+</html>
