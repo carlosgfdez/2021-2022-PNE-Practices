@@ -14,7 +14,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
         termcolor.cprint(self.requestline, 'green')
 
         if self.path == "/":
-            contents = Path("form-EX01.html").read_text()
+            contents = Path("form-EX02.html").read_text()
             self.send_response(200)
         elif self.path.startswith("/echo?"):
             content_1 = self.path.split("?")[1]
@@ -29,7 +29,13 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                         </head>
                         <body>
                             <h1>Received message:</h1>
-                            <p>{content_2}</p>
+                            """
+                if 'capital_letters' in self.path:
+                    content_3 = content_2.split("&")[0]
+                    contents += f"<p>{content_3.upper()}</p>"
+                else:
+                    contents += f"<p>{content_2}</p>"
+                contents += """
                             <a href="/">Main page</a>
                         </body>
                     </html>"""
