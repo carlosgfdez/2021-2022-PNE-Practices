@@ -14,7 +14,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
         termcolor.cprint(self.requestline, 'green')
 
         if self.path == "/":
-            contents = Path("Form-1.html").read_text()
+            contents = Path("form-1.html").read_text()
             self.send_response(200)
         elif self.path == "/ping?":
             contents = f"""
