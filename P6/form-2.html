@@ -11,18 +11,21 @@
       <hr>
       <p>Is the server alive?</p>
       <input type="submit" value="PING">
+          </form>
+
       <hr>
-      <p>Get a sequence. Select a sequence number</p>
+      <form action="get" method="get">
+        <p>Get a sequence. Select a sequence number</p>
       Options: <br>
       Choose operation:
-      <select name="operation">
-        <option value="zero">0</option>
-        <option value="one">1</option>
-        <option value="two">2</option>
-        <option value="three">3</option>
-        <option value="four">4</option>
-      </select>
-        <input type="GET"/>
-    </form>
+      <select name="sequence_number">
+        <option value="0">0</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+      <input type="submit" value="GET">
+      </form>
+
   </body>
 </html>
