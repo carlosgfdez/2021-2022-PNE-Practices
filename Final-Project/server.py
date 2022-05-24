@@ -15,7 +15,13 @@ import os
 SERVER = "rest.ensembl.org"
 PORT = 8080
 
-GENES = ["U5", "ADA", "FRAT1", "FXN", "RNU6_269P"]
+GENES = {"U5": "ENSAOCG00000009421",
+        "FRAT1": "ENSG00000165879",
+         "ADA": "ENSG00000196839",
+         "FXN": "ENSG00000165060",
+         "RNU6_269P": "ENSG00000212379"}
+
+
 def read_html_file(filename):
     contents = Path("./html/" + filename).read_text()
     contents = j.Template(contents)
@@ -47,6 +53,35 @@ def connect_web(URL, ENDPOINT):
         print(data)
     return data
 
+def genes_information(gene_1):
+    if gene_1 in GENES:
+        SERVER = 'rest.ensembl.org'
+        ENDPOINT = '/sequence/id'
+        RESOURCE = f'/{GENES[gene_1]}?content-type=application/json'
+        URL = SERVER + ENDPOINT + RESOURCE
+        CONTENT = ENDPOINT + RESOURCE
+
+        conn = http.client.HTTPConnection(SERVER)
+
+        try:
+            conn.request("GET", CONTENT)
+        except ConnectionRefusedError:
+            print("ERROR! Cannot connect to the Server")
+            exit()
+        response = conn.getresponse()
+
+        if response.status == HTTPStatus.OK:
+            print(f"Response received: {response.status} {response.reason}")
+            print()
+
+            data_1 = response.read().decode("utf-8")
+            data = json.loads(data_1)
+            print(data)
+            return data
+
+
+    else:
+        print("Choose a correct gene")
 
 
 socketserver.TCPServer.allow_reuse_address = True
@@ -131,14 +166,32 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
         elif path == "/geneSeq":
             if len(params) == 1:
                 user_gene = params['gene'][0]
-                sequence = Seq()
-                file_name = os.path.join("..", "Genes", f"{user_gene}.txt")
-                sequence.read_fasta(file_name)
+                info_dict = genes_information(user_gene)
+                sequence = info_dict['seq']
 
 
                 contents = read_html_file(path[1:] + ".html"). \
                     render(context={"gene": user_gene,
                                     "sequence": sequence})
+                self.send_response(200)
+            else:
+                contents = Path(f"Error.html").read_text()
+                self.send_response(404)
+
+        elif path == "/geneInfo":
+            if len(params) == 1:
+                user_gene = params['gene'][0]
+                info_dict = genes_information(user_gene)
+                sequence = info_dict['seq']
+                id_info = info_dict['id']
+
+                sequence_start = str(sequence)[0:3]
+                sequence_end = str(sequence)[-3:]
+
+                contents = read_html_file(path[1:] + ".html"). \
+                    render(context={"gene": user_gene,
+                                    "start": sequence_start,
+                                    "end": sequence_end})
                 self.send_response(200)
             else:
                 contents = Path(f"Error.html").read_text()
