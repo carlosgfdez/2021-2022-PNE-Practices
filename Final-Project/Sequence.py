@@ -112,9 +112,9 @@ class Seq:
             self.strbases += lines
 
     def frequent_base(self):
-        bases = ["A", "C", "G", "T"]
-        count_A, count_C, count_G, count_T = self.count_base()
-        counts = [count_A, count_C, count_G, count_T]
+        bases = ["A", "T", "C", "G"]
+        count_A, count_T, count_C, count_G = self.count_base()
+        counts = [count_A, count_T, count_C, count_G]
         zipped = zip(counts, bases)
         maximum = max(zipped)
         return maximum
