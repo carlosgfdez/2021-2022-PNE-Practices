@@ -3,6 +3,7 @@ from http import HTTPStatus
 import json
 import termcolor
 
+gene_1 = "MIR633"
 GENES = {"FRAT1": "ENSG00000165879",
          "ADA": "ENSG00000196839",
          "FXN": "ENSG00000165060",
@@ -16,7 +17,7 @@ GENES = {"FRAT1": "ENSG00000165879",
 
 SERVER = 'rest.ensembl.org'
 ENDPOINT = '/sequence/id'
-RESOURCE = f'/{GENES["MIR633"]}?content-type=application/json'
+RESOURCE = f'/{GENES[gene_1]}?content-type=application/json'
 URL = SERVER + ENDPOINT + RESOURCE
 CONTENT = ENDPOINT + RESOURCE
 PORT = 80
@@ -38,8 +39,10 @@ if response.status == HTTPStatus.OK:
     print(f"Response received: {response.status} {response.reason}")
     print()
 
-    raw_data = response.read().decode("utf-8")
-    ping = json.loads(raw_data)['ping']
-    if ping == 1:
-        print("PING OK! The database is running!")
+    data_1 = response.read().decode("utf-8")
+    data = json.loads(data_1)
+
+print(f"Gene: {gene_1}")
+print(f"Description: {data['desc']}")
+print(f"Bases: {data['seq']}")
 

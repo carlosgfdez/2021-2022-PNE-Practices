@@ -1,3 +1,4 @@
+import termcolor
 GENES = {"FRAT1": "ENSG00000165879",
          "ADA": "ENSG00000196839",
          "FXN": "ENSG00000165060",
@@ -11,6 +12,7 @@ GENES = {"FRAT1": "ENSG00000165879",
 
 for element in GENES:
     print(f"{element}: --> {GENES[element]}")
+
 
 
 #for gene, id in GENES.items():
