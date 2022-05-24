@@ -61,29 +61,36 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
             contents = Path("html/Index.html").read_text()
             self.send_response(200)
         elif path == "/listSpecies":
-            try:
-                limit_number = int(params['limit'][0])
-                species_dict_1 = connect_web("/info/species", "")
-                species_dict_2 = species_dict_1["species"]
-                total_number = len(species_dict_2)
-                species_list = []
-                for element in range(0, limit_number):
-                    species_list.append(species_dict_2[element]["common_name"])
-                species = ""
-                for element in species_list:
-                    species += f"·{element.capitalize()}<br>"
 
-                contents = read_html_file(path[1:] + ".html").\
-                    render(context={"species": species,
-                                    "total": total_number,
-                                    "limit": limit_number})
-                self.send_response(200)
-            except (KeyError, IndexError, ValueError):
+            species_dict_1 = connect_web("/info/species", "")
+            species_dict_2 = species_dict_1["species"]
+            total_number = len(species_dict_2)
+
+            if len(params) == 1:
+                limit_number = int(params['limit'][0])
+            elif len(params) == 0:
+                limit_number = total_number
+            else:
                 contents = Path("./html/" + "error.html").read_text()
                 self.send_response(404)
 
+            species_list = []
+            for element in range(0, limit_number):
+                species_list.append(species_dict_2[element]["common_name"])
+            species = ""
+            for element in species_list:
+                species += f"·{element.capitalize()}<br>"
+
+            contents = read_html_file(path[1:] + ".html").\
+                render(context={"species": species,
+                                "total": total_number,
+                                "limit": limit_number})
+            self.send_response(200)
+
+
+
         elif path == "/karyotype":
-            try:
+            if len(params) == 1:
                 specie_name = params['specie'][0]
                 karyotype_dict_1 = connect_web("info/assembly/", specie_name)
                 karyotype_dict_2 = karyotype_dict_1["karyotype"]
@@ -94,12 +101,13 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 contents = read_html_file(path[1:] + ".html").\
                     render(context={'karyotype': karyo})
                 self.send_response(200)
-            except (KeyError, IndexError, ValueError):
+
+            else:
                 contents = Path("./html/" + "error.html").read_text()
                 self.send_response(404)
 
         elif path == "/chromosomeLength":
-            try:
+            if len(params) == 2:
                 specie_name = params['specie'][0]
                 chromosome_number = params['chromo'][0]
                 chromo_dict_1 = connect_web("info/assembly/", specie_name)
@@ -115,7 +123,8 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 contents = read_html_file(path[1:] + ".html"). \
                     render(context={'length': chromo_length})
                 self.send_response(200)
-            except (KeyError, IndexError, ValueError):
+
+            else:
                 contents = Path("./html/" + "error.html").read_text()
                 self.send_response(404)
 
