@@ -224,6 +224,17 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                                     "bases": bases,
                                     "percentage": percentage_bases})
                 self.send_response(200)
+
+
+            elif path == "/geneList":
+                chromosome_number = params['chromo'][0]
+                print(chromosome_number)
+
+                contents = read_html_file(path[1:] + ".html"). \
+                    render(context={"gene": chromosome_number})
+
+
+
             else:
                 contents = Path(f"Error.html").read_text()
                 self.send_response(404)
