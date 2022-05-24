@@ -28,7 +28,7 @@ def read_template_html_file(filename):
 def connect_web(URL, ENDPOINT):
     conn = http.client.HTTPConnection(SERVER)
     PARAMETER = "?content-type=application/json"
-    CONTENT = URL + PARAMETER + ENDPOINT
+    CONTENT = URL + ENDPOINT + PARAMETER
     try:
         conn.request("GET", CONTENT)
     except ConnectionRefusedError:
@@ -62,8 +62,8 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
             self.send_response(200)
         elif path == "/listSpecies":
             try:
-                species_dict_1 = connect_web("/info/species", "")
                 limit_number = int(params['limit'][0])
+                species_dict_1 = connect_web("/info/species", "")
                 species_dict_2 = species_dict_1["species"]
                 total_number = len(species_dict_2)
                 species_list = []
@@ -84,15 +84,18 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
 
         elif path == "/karyotype":
             try:
-                sequence_number = int(params['sequence_number'][0])  # 2
-                sequence = Seq(SEQUENCES[sequence_number])  # "ATCG"
+                specie_name = params['specie'][0]
+                karyotype_dict_1 = connect_web("info/assembly/", specie_name)
+                karyotype_dict_2 = karyotype_dict_1["karyotype"]
+                karyo = ""
+                for element in karyotype_dict_2:
+                    karyo += f"·{element}<br>"
+                print(karyo)
                 contents = read_html_file(path[1:] + ".html").\
-                    render(context={'The total number of species in ensemble is': sequence_number,
-                                    'The limit you have selected is': sequence,
-                                    'The names of the species are': sequence})
+                    render(context={'karyotype': karyo})
                 self.send_response(200)
             except (KeyError, IndexError, ValueError):
-                contents = Path(HTML_FOLDER + "error.html").read_text()
+                contents = Path("./html/" + "error.html").read_text()
                 self.send_response(404)
 
 
@@ -108,9 +111,6 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
         self.wfile.write(contents_bytes)
 
         return
-
-
-
 
 
 
