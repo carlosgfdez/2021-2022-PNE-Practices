@@ -9,10 +9,13 @@ import http.client
 import json
 from Sequence import Seq
 from http import HTTPStatus
+import os
 
 
 SERVER = "rest.ensembl.org"
 PORT = 8080
+
+GENES = ["U5", "ADA", "FRAT1", "FXN", "RNU6_269P"]
 def read_html_file(filename):
     contents = Path("./html/" + filename).read_text()
     contents = j.Template(contents)
@@ -41,6 +44,7 @@ def connect_web(URL, ENDPOINT):
 
         data_1 = response.read().decode("utf-8")
         data = json.loads(data_1)
+        print(data)
     return data
 
 
@@ -88,7 +92,6 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
             self.send_response(200)
 
 
-
         elif path == "/karyotype":
             if len(params) == 1:
                 specie_name = params['specie'][0]
@@ -116,9 +119,6 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
 
                 for e in range(0,len(chromo_dict_2)):
                     chromo_length += int(chromo_dict_2[e]["length"])
-                print(chromo_length)
-
-
 
                 contents = read_html_file(path[1:] + ".html"). \
                     render(context={'length': chromo_length})
@@ -127,6 +127,24 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
             else:
                 contents = Path("./html/" + "error.html").read_text()
                 self.send_response(404)
+
+        elif path == "/geneSeq":
+            if len(params) == 1:
+                user_gene = params['gene'][0]
+                sequence = Seq()
+                file_name = os.path.join("..", "Genes", f"{user_gene}.txt")
+                sequence.read_fasta(file_name)
+
+
+                contents = read_html_file(path[1:] + ".html"). \
+                    render(context={"gene": user_gene,
+                                    "sequence": sequence})
+                self.send_response(200)
+            else:
+                contents = Path(f"Error.html").read_text()
+                self.send_response(404)
+
+
 
 
         else:
