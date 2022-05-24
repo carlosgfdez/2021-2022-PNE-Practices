@@ -98,6 +98,27 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 contents = Path("./html/" + "error.html").read_text()
                 self.send_response(404)
 
+        elif path == "/chromosomeLength":
+            try:
+                specie_name = params['specie'][0]
+                chromosome_number = params['chromo'][0]
+                chromo_dict_1 = connect_web("info/assembly/", specie_name)
+                chromo_dict_2 = chromo_dict_1["top_level_region"]
+                chromo_length = 0
+
+                for e in range(0,len(chromo_dict_2)):
+                    chromo_length += int(chromo_dict_2[e]["length"])
+                print(chromo_length)
+
+
+
+                contents = read_html_file(path[1:] + ".html"). \
+                    render(context={'length': chromo_length})
+                self.send_response(200)
+            except (KeyError, IndexError, ValueError):
+                contents = Path("./html/" + "error.html").read_text()
+                self.send_response(404)
+
 
         else:
             contents = Path(f"Error.html").read_text()
