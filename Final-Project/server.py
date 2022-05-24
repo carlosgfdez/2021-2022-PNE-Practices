@@ -179,7 +179,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                                     "sequence": sequence})
                 self.send_response(200)
             else:
-                contents = Path(f"Error.html").read_text()
+                contents = Path("./html/" + "error.html").read_text()
                 self.send_response(404)
 
         elif path == "/geneInfo":
@@ -205,7 +205,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                                     "name": chromosome_name})
                 self.send_response(200)
             else:
-                contents = Path(f"Error.html").read_text()
+                contents = Path("./html/" + "error.html").read_text()
                 self.send_response(404)
 
         elif path == "/geneCalc":
@@ -224,24 +224,24 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                                     "bases": bases,
                                     "percentage": percentage_bases})
                 self.send_response(200)
+            else:
+                contents = Path("./html/" + "error.html").read_text()
+                self.send_response(404)
 
 
-            elif path == "/geneList":
+        elif path == "/geneList":
+            if len(params) == 3:
                 chromosome_number = params['chromo'][0]
                 print(chromosome_number)
 
                 contents = read_html_file(path[1:] + ".html"). \
                     render(context={"gene": chromosome_number})
-
-
-
             else:
-                contents = Path(f"Error.html").read_text()
+                contents = Path("./html/" + "error.html").read_text()
                 self.send_response(404)
 
-
         else:
-            contents = Path(f"Error.html").read_text()
+            contents = Path("./html/" + "error.html").read_text()
             self.send_response(404)
 
         contents_bytes = contents.encode()
