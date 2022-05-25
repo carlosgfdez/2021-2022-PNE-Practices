@@ -263,12 +263,17 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
             contents = Path("./html/" + "error.html").read_text()
             self.send_response(404)
 
-        contents_bytes = contents.encode()
-        self.send_header('Content-Type', 'text/html')
-        self.send_header('Content-Length', str(len(contents_bytes)))
+        if "json" in params.keys():
+            contents = json.dumps(contents)
+            self.send_header('Content-Type', 'application/json')
+
+        else:
+            self.send_header('Content-Type', 'text/html')
+        self.send_header('Content-Length', len(contents.encode()))
+
         self.end_headers()
 
-        self.wfile.write(contents_bytes)
+        self.wfile.write(contents.encode())
 
         return
 
