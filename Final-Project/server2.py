@@ -118,10 +118,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
             species = ""
 
             if "json" in params:
-                for element in species_list:
-                    species += f"{element}, "
-                species = species[:-2]
-                contents = {"species": species,
+                contents = {"species": species_list,
                             "total": total_number,
                             "limit": limit_number}
             else:
@@ -140,10 +137,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 karyo = ""
 
                 if "json" in params:
-                    for element in karyotype_dict_2:
-                        karyo += f"{element}, "
-                    karyo = karyo[:-2]
-                    contents = {'karyotype': karyo}
+                    contents = {'karyotype': karyotype_dict_2}
                 else:
                     for element in karyotype_dict_2:
                         karyo += f"·{element}<br>"
@@ -274,10 +268,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                                             chromo_list.append(u2)
                 chromo_info = ""
                 if "json" in params:
-                    for e in chromo_list:
-                        chromo_info += f"{e}, "
-                    chromo_info = chromo_info[:-2]
-                    contents = {"chromosome": chromo,"gene_names": chromo_info}
+                    contents = {"chromosome": chromo,"gene_names": chromo_list}
                 else:
                     for e in chromo_list:
                         chromo_info += f"- {e}<br>"
