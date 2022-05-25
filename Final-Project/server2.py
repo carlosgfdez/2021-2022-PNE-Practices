@@ -101,11 +101,14 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
             species_dict_1 = connect_web("/info/species", "")
             species_dict_2 = species_dict_1["species"]
             total_number = len(species_dict_2)
+            limit_number = int(params['limit'][0])
 
             if len(params) == 1:
-                limit_number = int(params['limit'][0])
+                pass
             elif len(params) == 0:
                 limit_number = total_number
+            elif len(params) == 2 and "json" in params:
+                pass
             else:
                 contents = Path("./html/" + "error.html").read_text()
                 self.send_response(404)
@@ -114,33 +117,46 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
             for element in range(0, limit_number):
                 species_list.append(species_dict_2[element]["common_name"])
             species = ""
-            for element in species_list:
-                species += f"·{element.capitalize()}<br>"
 
-            contents = read_html_file(path[1:] + ".html").\
-                render(context={"species": species,
-                                "total": total_number,
-                                "limit": limit_number})
-
+            if "json" in params:
+                for element in species_list:
+                    species += f"{element}, "
+                species = species[:-2]
+                contents = {"species": species,
+                            "total": total_number,
+                            "limit": limit_number}
+            else:
+                for element in species_list:
+                    species += f"·{element.capitalize()}<br>"
+                contents = read_html_file(path[1:] + ".html").\
+                    render(context={"species": species,
+                                    "total": total_number,
+                                    "limit": limit_number})
 
         elif path == "/karyotype":
-            if len(params) == 1:
+            if len(params) == 1 or (len(params) == 2 and "json" in params):
                 specie_name = params['specie'][0]
                 karyotype_dict_1 = connect_web("info/assembly/" + specie_name, "")
                 karyotype_dict_2 = karyotype_dict_1["karyotype"]
                 karyo = ""
-                for element in karyotype_dict_2:
-                    karyo += f"·{element}<br>"
-                print(karyo)
-                contents = read_html_file(path[1:] + ".html").\
-                    render(context={'karyotype': karyo})
+
+                if "json" in params:
+                    for element in karyotype_dict_2:
+                        karyo += f"{element}, "
+                    karyo = karyo[:-2]
+                    contents = {'karyotype': karyo}
+                else:
+                    for element in karyotype_dict_2:
+                        karyo += f"·{element}<br>"
+                    contents = read_html_file(path[1:] + ".html").\
+                        render(context={'karyotype': karyo})
 
             else:
                 contents = Path("./html/" + "error.html").read_text()
                 self.send_response(404)
 
         elif path == "/chromosomeLength":
-            if len(params) == 2:
+            if len(params) == 2 or (len(params) == 3 and "json" in params):
                 specie_name = params['specie'][0]
                 chromosome_number = params['chromo'][0]
                 chromo_dict_1 = connect_web("info/assembly/" + specie_name, "")
@@ -150,29 +166,36 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 for e in range(0,len(chromo_dict_2)):
                     chromo_length += int(chromo_dict_2[e]["length"])
 
-                contents = read_html_file(path[1:] + ".html"). \
-                    render(context={'length': chromo_length})
+                if "json" in params:
+                    contents = {'length': chromo_length}
+
+                else:
+                    contents = read_html_file(path[1:] + ".html"). \
+                        render(context={'length': chromo_length})
 
             else:
                 contents = Path("./html/" + "error.html").read_text()
                 self.send_response(404)
 
         elif path == "/geneSeq":
-            if len(params) == 1:
+            if len(params) == 1 or (len(params) == 2 and "json" in params):
                 user_gene = params['gene'][0]
                 info_dict = genes_information(user_gene)
                 sequence = info_dict['seq']
+                if "json" in params:
+                    contents = {"gene": user_gene,
+                                "sequence": sequence}
+                else:
+                    contents = read_html_file(path[1:] + ".html"). \
+                        render(context={"gene": user_gene,
+                                        "sequence": sequence})
 
-
-                contents = read_html_file(path[1:] + ".html"). \
-                    render(context={"gene": user_gene,
-                                    "sequence": sequence})
             else:
                 contents = Path("./html/" + "error.html").read_text()
                 self.send_response(404)
 
         elif path == "/geneInfo":
-            if len(params) == 1:
+            if len(params) == 1 or (len(params) == 2 and "json" in params):
                 user_gene = params['gene'][0]
                 info_dict = genes_information(user_gene)
                 sequence = info_dict['seq']
@@ -183,41 +206,52 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 chromosome_name = chromosome_info_2[1]
                 chromosome_start = chromosome_info_2[3]
                 chromosome_end = chromosome_info_2[4]
-
-
-                contents = read_html_file(path[1:] + ".html"). \
-                    render(context={"gene": user_gene,
-                                    "start": chromosome_start,
-                                    "end": chromosome_end,
-                                    "id": id_info,
-                                    "length": sequence_length,
-                                    "name": chromosome_name})
+                if "json" in params:
+                    contents = {"gene": user_gene,
+                                "start": chromosome_start,
+                                "end": chromosome_end,
+                                "id": id_info,
+                                "length": sequence_length,
+                                "name": chromosome_name}
+                else:
+                    contents = read_html_file(path[1:] + ".html"). \
+                        render(context={"gene": user_gene,
+                                        "start": chromosome_start,
+                                        "end": chromosome_end,
+                                        "id": id_info,
+                                        "length": sequence_length,
+                                        "name": chromosome_name})
             else:
                 contents = Path("./html/" + "error.html").read_text()
                 self.send_response(404)
 
         elif path == "/geneCalc":
-            if len(params) == 1:
+            if len(params) == 1 or (len(params) == 2 and "json" in params):
                 user_gene = params['gene'][0]
                 info_dict = genes_information(user_gene)
                 sequence = info_dict['seq']
                 length = Seq(sequence).len()
                 bases = Seq(sequence).frequent_base()[1]
                 percentage_bases = Seq(sequence).info()
-
-
-                contents = read_html_file(path[1:] + ".html"). \
-                    render(context={"gene": user_gene,
-                                    "length": length,
-                                    "bases": bases,
-                                    "percentage": percentage_bases})
+                if "json" in params:
+                    percentage_bases = percentage_bases.replace("<br><br>", ", ")
+                    contents = {"gene": user_gene,
+                                "length": length,
+                                "bases": bases,
+                                "percentage": percentage_bases}
+                else:
+                    contents = read_html_file(path[1:] + ".html"). \
+                        render(context={"gene": user_gene,
+                                        "length": length,
+                                        "bases": bases,
+                                        "percentage": percentage_bases})
             else:
                 contents = Path("./html/" + "error.html").read_text()
                 self.send_response(404)
 
 
         elif path == "/geneList":
-            if len(params) == 3:
+            if len(params) == 3 or (len(params) == 4 and "json" in params):
                 chromo = params['chromo'][0]
                 start = params['start'][0]
                 end = params['end'][0]
@@ -239,12 +273,17 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                                         if u1 == "associated_gene":
                                             u2 = i[u1]
                                             chromo_list.append(u2)
-
                 chromo_info = ""
-                for e in chromo_list:
-                    chromo_info += f"- {e}<br>"
-                contents = read_html_file(path[1:] + ".html"). \
-                    render(context={"name": chromo,"info": chromo_info})
+                if "json" in params:
+                    for e in chromo_list:
+                        chromo_info += f"{e}, "
+                    chromo_info = chromo_info[:-2]
+                    contents = {"name": chromo,"info": chromo_info}
+                else:
+                    for e in chromo_list:
+                        chromo_info += f"- {e}<br>"
+                    contents = read_html_file(path[1:] + ".html"). \
+                        render(context={"name": chromo,"info": chromo_info})
             else:
                 contents = Path("./html/" + "error.html").read_text()
                 self.send_response(404)
@@ -255,8 +294,12 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
 
         self.send_response(200)  # -- Status line: OK!
 
-        # Define the content-type header:
-        self.send_header('Content-Type', 'text/html')
+        if "json" in params.keys():
+            contents = json.dumps(contents)
+            self.send_header('Content-Type', 'application/json')
+
+        else:
+            self.send_header('Content-Type', 'text/html')
         self.send_header('Content-Length', len(contents.encode()))
 
         # The header is finished

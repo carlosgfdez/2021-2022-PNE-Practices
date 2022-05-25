@@ -163,7 +163,6 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 info_dict = genes_information(user_gene)
                 sequence = info_dict['seq']
 
-
                 contents = read_html_file(path[1:] + ".html"). \
                     render(context={"gene": user_gene,
                                     "sequence": sequence})
