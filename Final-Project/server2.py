@@ -97,7 +97,6 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
             contents = Path("html/Index.html").read_text()
             self.send_response(200)
         elif path == "/listSpecies":
-
             species_dict_1 = connect_web("/info/species", "")
             species_dict_2 = species_dict_1["species"]
             total_number = len(species_dict_2)
@@ -237,14 +236,14 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                     percentage_bases = percentage_bases.replace("<br><br>", ", ")
                     contents = {"gene": user_gene,
                                 "length": length,
-                                "bases": bases,
-                                "percentage": percentage_bases}
+                                "most_frequent_bases": bases,
+                                "bases_percentage": percentage_bases}
                 else:
                     contents = read_html_file(path[1:] + ".html"). \
                         render(context={"gene": user_gene,
                                         "length": length,
                                         "bases": bases,
-                                        "percentage": percentage_bases})
+                                        "bases_percentage": percentage_bases})
             else:
                 contents = Path("./html/" + "error.html").read_text()
                 self.send_response(404)
@@ -278,12 +277,12 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                     for e in chromo_list:
                         chromo_info += f"{e}, "
                     chromo_info = chromo_info[:-2]
-                    contents = {"name": chromo,"info": chromo_info}
+                    contents = {"chromosome": chromo,"gene_names": chromo_info}
                 else:
                     for e in chromo_list:
                         chromo_info += f"- {e}<br>"
                     contents = read_html_file(path[1:] + ".html"). \
-                        render(context={"name": chromo,"info": chromo_info})
+                        render(context={"chromosome": chromo,"gene_names": chromo_info})
             else:
                 contents = Path("./html/" + "error.html").read_text()
                 self.send_response(404)
