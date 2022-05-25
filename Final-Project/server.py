@@ -42,7 +42,7 @@ def read_template_html_file(filename):
 def connect_web(URL, ENDPOINT):
     conn = http.client.HTTPConnection(SERVER)
     PARAMETER = "?content-type=application/json"
-    CONTENT = URL + ENDPOINT + PARAMETER
+    CONTENT = URL + PARAMETER + ENDPOINT
     try:
         conn.request("GET", CONTENT)
     except ConnectionRefusedError:
@@ -55,7 +55,6 @@ def connect_web(URL, ENDPOINT):
 
         data_1 = response.read().decode("utf-8")
         data = json.loads(data_1)
-        print(data)
     return data
 
 def genes_information(gene_1):
@@ -82,20 +81,6 @@ def genes_information(gene_1):
         data = json.loads(data_1)
         return data
 
-def gene_list(chromo, start, end):
-    endpoint = '/overlap/region/human/'
-    params = f'{chromo}:{start}-{end}?content-type=application/json;feature=gene;feature=transcript;feature=cds;feature=exon'
-    url = endpoint + params
-
-    conn = http.client.HTTPConnection(SERVER)
-    conn.request("GET", url)
-    response = conn.getresponse()
-    if response.status == HTTPStatus.OK:
-        print(f"Response received: {response.status} {response.reason}")
-        print()
-        data_1 = response.read().decode("utf-8")
-        data = json.loads(data_1)
-    return data
 
 
 
@@ -146,7 +131,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
         elif path == "/karyotype":
             if len(params) == 1:
                 specie_name = params['specie'][0]
-                karyotype_dict_1 = connect_web("info/assembly/", specie_name)
+                karyotype_dict_1 = connect_web("info/assembly/" + specie_name, "")
                 karyotype_dict_2 = karyotype_dict_1["karyotype"]
                 karyo = ""
                 for element in karyotype_dict_2:
@@ -164,7 +149,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
             if len(params) == 2:
                 specie_name = params['specie'][0]
                 chromosome_number = params['chromo'][0]
-                chromo_dict_1 = connect_web("info/assembly/", specie_name)
+                chromo_dict_1 = connect_web("info/assembly/" + specie_name, "")
                 chromo_dict_2 = chromo_dict_1["top_level_region"]
                 chromo_length = 0
 
@@ -242,14 +227,35 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
 
 
         elif path == "/geneList":
-            if len(params) == 3:
-                chromo = params['chromo'][0]  # Comment
-                start = int(params['start'][0])  # Comment
-                end = int(params['end'][0])  # Comment
-                data = gene_list(chromo, start, end)
+            if len(params) == 4:
+                specie = params['specie'][0]
+                chromo = params['chromo'][0]
+                start = params['start'][0]
+                end = params['end'][0]
+                mixed_info = chromo + ":" + start + "-" + end
+                chromo_dict = connect_web("phenotype/region/" + specie + "/" + mixed_info, ";feature_type=Variation")
 
+                list_1 = []
+                list_2 = []
+                chromo_list = []
+
+                for element in range(0,len(chromo_dict)):
+                    list_1.append(chromo_dict[element]["phenotype_associations"])
+                    for e1 in list_1:
+                        for e2 in e1:
+                            if 'attributes' in e2:
+                                list_2.append(e2['attributes'])
+                                for i in list_2:
+                                    for u1, u2 in i.items():
+                                        if u1 == "associated_gene":
+                                            u2 = i[u1]
+                                            chromo_list.append(u2)
+
+                chromo_info = ""
+                for e in chromo_list:
+                    chromo_info += f"- {e}<br>"
                 contents = read_html_file(path[1:] + ".html"). \
-                    render(context={"data": data})
+                    render(context={"name": chromo,"info": chromo_info})
                 self.send_response(200)
             else:
                 contents = Path("./html/" + "error.html").read_text()

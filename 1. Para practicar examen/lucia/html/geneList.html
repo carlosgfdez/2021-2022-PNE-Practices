@@ -2,9 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Chromosome list</title>
 </head>
-<body>
-{{context.gene}}
+<h1>Gene list</h1>
+<body style="background-color: lightgray">
+The names of the genes are:
+{% for g in context.gene %}
+<p>{{g}}</p>
+{% endfor %}}
 </body>
 </html>

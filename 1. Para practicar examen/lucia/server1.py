@@ -192,16 +192,31 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 "t_lenght": total_lenght
             })
 
-        elif path == "/geneList": #INTENTAR ENTENDERLO
-            chromo = arguments["chromo"][0]
+
+        elif path == "/geneList":
+            specie = arguments["specie"][0]
             start = arguments["start"][0]
             end = arguments["end"][0]
-            everything = chromo + ":" + start + "-" + end
-            dict_answer = ("/phenotype/region/homo_sapiens/" + everything, ";feature=gene;feature=transcript;feature=cds;feature=exon")
-            print(dict_answer)
-            contents = read_html_file(path[1:] + ".html")\
+            name = arguments["n_chromo"][0]
+            everything = name + ":" + start + "-" + end
+            dict_answer = make_ensembl_request("phenotype/region/" + specie + "/" + everything, "")
+            lists = []
+            b = []
+            gene_list = []
+            for i in range(0, len(dict_answer)):
+                lists.append(dict_answer[i]["phenotype_association"])  # nos metemos dentro del phenotype association
+                for c in lists:  # c son todas las keys en phenotype_association
+                    for d in c:  # d son los values de las keys
+                        if "attributes" in d:  # si existe attributes como value, lo appendeamos
+                            b.append(d["attributes"])
+                            for t in b:  # para los values de attributes, que es una key appendeada en una lista
+                                for k, v in t.items():  # para keys y values en los items de t, que ahora es key
+                                    if k == "associated_gene":  # si la key es associated_genes, appendeamos su value
+                                        v = t[k]
+                                        gene_list.append(v)
+            contents = read_html_file(path[1:] + ".html") \
                 .render(context={
-                "gene": chromo
+                "gene": gene_list
             })
 
         else:
