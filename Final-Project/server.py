@@ -53,6 +53,7 @@ def connect_web(ENDPOINT, PARAMS):
 
         data_1 = response.read().decode("utf-8")
         data = json.loads(data_1)
+        print(data)
     return data
 
 def genes_information(gene_1):
@@ -97,78 +98,104 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
             contents = Path("html/Index.html").read_text()
             self.send_response(200)
         elif path == "/listSpecies":
-            species_dict_1 = connect_web("/info/species", "")
-            species_dict_2 = species_dict_1["species"]
-            total_number = len(species_dict_2)
-            limit_number = int(params['limit'][0])
+            try:
+                species_dict_1 = connect_web("/info/species", "")
+                species_dict_2 = species_dict_1["species"]
+                total_number = len(species_dict_2)
 
+                if len(params) == 1 or (len(params) == 2 and "json" in params):
+                    limit_number = int(params['limit'][0])
+                elif len(params) == 0:
+                    limit_number = total_number
+                else:
+                    contents = Path("./html/" + "error.html").read_text()
+                    self.send_response(404)
 
-            if len(params) == 1 or (len(params) == 2 and "json" in params):
-                limit_number = int(params['limit'][0])
-            elif len(params) == 0:
-                limit_number = total_number
-            else:
-                contents = Path("./html/" + "error.html").read_text()
-                self.send_response(404)
+                species_list = []
+                for element in range(0, limit_number):
+                    species_list.append(species_dict_2[element]["common_name"])
+                species = ""
 
-            species_list = []
-            for element in range(0, limit_number):
-                species_list.append(species_dict_2[element]["common_name"])
-            species = ""
-
-            if "json" in params:
-                contents = {"species": species_list,
-                            "total": total_number,
-                            "limit": limit_number}
-            else:
-                for element in species_list:
-                    species += f"·{element.capitalize()}<br>"
-                contents = read_html_file(path[1:] + ".html").\
-                    render(context={"species": species,
-                                    "total": total_number,
-                                    "limit": limit_number})
+                if "json" in params:
+                    contents = {"species": species_list,
+                                "total": total_number,
+                                "limit": limit_number}
+                else:
+                    for element in species_list:
+                        species += f"·{element.capitalize()}<br>"
+                    contents = read_html_file(path[1:] + ".html").\
+                        render(context={"species": species,
+                                        "total": total_number,
+                                        "limit": limit_number})
+            except Exception:
+                if "json" in params:
+                    contents = {"Error": "An error ocurred. Try again with an integer"}
+                else:
+                    contents = read_html_file("error.html").\
+                        render()
 
 
         elif path == "/karyotype":
-            if len(params) == 1 or (len(params) == 2 and "json" in params):
-                specie_name = params['specie'][0]
-                karyotype_dict_1 = connect_web("info/assembly/" + specie_name, "")
-                karyotype_dict_2 = karyotype_dict_1["karyotype"]
-                karyo = ""
+            try:
+                if len(params) == 1 or (len(params) == 2 and "json" in params):
+                    specie_name = params['specie'][0]
+                    karyotype_dict_1 = connect_web("info/assembly/" + specie_name, "")
+                    karyotype_dict_2 = karyotype_dict_1["karyotype"]
+                    karyo = ""
 
-                if "json" in params:
-                    contents = {'karyotype': karyotype_dict_2}
+                    if "json" in params:
+                        contents = {'karyotype': karyotype_dict_2}
+                    else:
+                        for element in karyotype_dict_2:
+                            karyo += f"·{element}<br>"
+                        contents = read_html_file(path[1:] + ".html").\
+                            render(context={'karyotype': karyo})
+
                 else:
-                    for element in karyotype_dict_2:
-                        karyo += f"·{element}<br>"
-                    contents = read_html_file(path[1:] + ".html").\
-                        render(context={'karyotype': karyo})
-
-            else:
-                contents = Path("./html/" + "error.html").read_text()
-                self.send_response(404)
+                    contents = Path("./html/" + "error.html").read_text()
+                    self.send_response(404)
+            except Exception:
+                if "json" in params:
+                    contents = {"Error": "An error ocurred. Try again with a valid specie."}
+                else:
+                    contents = read_html_file("error.html").\
+                        render()
 
         elif path == "/chromosomeLength":
-            if len(params) == 2 or (len(params) == 3 and "json" in params):
-                specie_name = params['specie'][0]
-                chromosome_number = params['chromo'][0]
-                chromo_dict_1 = connect_web("info/assembly/" + specie_name, "")
-                chromo_dict_2 = chromo_dict_1["top_level_region"]
-                chromo_length = 0
+            try:
+                if len(params) == 2 or (len(params) == 3 and "json" in params):
+                    specie_name = params['specie'][0]
+                    chromosome_number = params['chromo'][0]
+                    chromo_dict_1 = connect_web("info/assembly/" + specie_name, "")
+                    chromo_dict_2 = chromo_dict_1["top_level_region"]
+                    chromo_length = 0
 
-                for e in range(0,len(chromo_dict_2)):
-                    chromo_length += int(chromo_dict_2[e]["length"])
+                    for e in range(0,len(chromo_dict_2)):
+                        if chromo_dict_2[e]["name"] == chromosome_number:
+                            chromo_length += int(chromo_dict_2[e]["length"])
+                    if chromo_length == 0:
+                        if "json" in params:
+                            contents = {"Error": "An error ocurred. Try again with an integer"}
+                        else:
+                            contents = read_html_file("error.html"). \
+                                render()
+                    else:
+                        if "json" in params:
+                            contents = {'length': chromo_length}
 
-                if "json" in params:
-                    contents = {'length': chromo_length}
+                        else:
+                            contents = read_html_file(path[1:] + ".html"). \
+                                render(context={'length': chromo_length})
 
                 else:
-                    contents = read_html_file(path[1:] + ".html"). \
-                        render(context={'length': chromo_length})
-
-            else:
-                contents = Path("./html/" + "error.html").read_text()
-                self.send_response(404)
+                    contents = Path("./html/" + "error.html").read_text()
+                    self.send_response(404)
+            except Exception:
+                if "json" in params:
+                    contents = {"Error": "An error ocurred. Try again with a valid specie."}
+                else:
+                    contents = read_html_file("error.html"). \
+                        render()
 
         elif path == "/geneSeq":
             if len(params) == 1 or (len(params) == 2 and "json" in params):
@@ -244,39 +271,47 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
 
 
         elif path == "/geneList":
-            if len(params) == 3 or (len(params) == 4 and "json" in params):
-                chromo = params['chromo'][0]
-                start = params['start'][0]
-                end = params['end'][0]
-                mixed_info = chromo + ":" + start + "-" + end
-                chromo_dict = connect_web("phenotype/region/homo_sapiens/" + mixed_info, ";feature_type=Variation")
+            try:
+                if len(params) == 3 or (len(params) == 4 and "json" in params):
+                    chromo = params['chromo'][0]
+                    start = params['start'][0]
+                    end = params['end'][0]
+                    mixed_info = chromo + ":" + start + "-" + end
+                    chromo_dict = connect_web("phenotype/region/homo_sapiens/" + mixed_info, ";feature_type=Variation")
 
-                list_1 = []
-                list_2 = []
-                chromo_list = []
+                    list_1 = []
+                    list_2 = []
+                    chromo_list = []
 
-                for element in range(0,len(chromo_dict)):
-                    list_1.append(chromo_dict[element]["phenotype_associations"])
-                    for e1 in list_1:
-                        for e2 in e1:
-                            if 'attributes' in e2:
-                                list_2.append(e2['attributes'])
-                                for i in list_2:
-                                    for u1, u2 in i.items():
-                                        if u1 == "associated_gene":
-                                            u2 = i[u1]
-                                            chromo_list.append(u2)
-                chromo_info = ""
-                if "json" in params:
-                    contents = {"chromosome": chromo,"gene_names": chromo_list}
+                    for element in range(0,len(chromo_dict)):
+                        list_1.append(chromo_dict[element]["phenotype_associations"])
+                        for e1 in list_1:
+                            for e2 in e1:
+                                if 'attributes' in e2:
+                                    list_2.append(e2['attributes'])
+                                    for i in list_2:
+                                        for u1, u2 in i.items():
+                                            if u1 == "associated_gene":
+                                                u2 = i[u1]
+                                                chromo_list.append(u2)
+                    chromo_info = ""
+                    if "json" in params:
+                        contents = {"chromosome": chromo,"gene_names": chromo_list}
+                    else:
+                        for e in chromo_list:
+                            chromo_info += f"- {e}<br>"
+                        contents = read_html_file(path[1:] + ".html"). \
+                            render(context={"chromosome": chromo,"gene_names": chromo_info})
                 else:
-                    for e in chromo_list:
-                        chromo_info += f"- {e}<br>"
-                    contents = read_html_file(path[1:] + ".html"). \
-                        render(context={"chromosome": chromo,"gene_names": chromo_info})
-            else:
-                contents = Path("./html/" + "error.html").read_text()
-                self.send_response(404)
+                    contents = Path("./html/" + "error.html").read_text()
+                    self.send_response(404)
+            except Exception:
+                if "json" in params:
+                    contents = {"Error": "An error ocurred. Try again with an integer"}
+                else:
+                    contents = read_html_file("error.html").\
+                        render()
+
 
         else:
             contents = Path("./html/" + "error.html").read_text()
