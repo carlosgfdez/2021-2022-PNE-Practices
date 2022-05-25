@@ -1,5 +1,3 @@
-# -- Example of a client that uses the HTTP.client library
-# -- for requesting the main page from the server
 import http.client
 
 PORT = 8080
@@ -7,9 +5,6 @@ SERVER = 'localhost'
 
 print(f"\nConnecting to server: {SERVER}:{PORT}")
 conn = http.client.HTTPConnection(SERVER, PORT)
-
-# -- Send the request message, using the GET method. We are
-# -- requesting the main page (/)
 
 
 def connect_server(ENDPOINT, PARAMETER):

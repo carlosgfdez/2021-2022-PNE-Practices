@@ -97,37 +97,42 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
             contents = Path("html/Index.html").read_text()
             self.send_response(200)
         elif path == "/listSpecies":
-            species_dict_1 = connect_web("/info/species", "")
-            species_dict_2 = species_dict_1["species"]
-            total_number = len(species_dict_2)
-            limit_number = int(params['limit'][0])
+            try:
+                species_dict_1 = connect_web("/info/species", "")
+                species_dict_2 = species_dict_1["species"]
+                total_number = len(species_dict_2)
+                limit_number = int(params['limit'][0])
 
-            if len(params) == 1:
+
+                if len(params) == 1 or (len(params) == 2 and "json" in params):
+                    limit_number = int(params['limit'][0])
+                elif len(params) == 0:
+                    limit_number = total_number
+                else:
+                    contents = Path("./html/" + "error.html").read_text()
+                    self.send_response(404)
+
+                species_list = []
+                for element in range(0, limit_number):
+                    species_list.append(species_dict_2[element]["common_name"])
+                species = ""
+
+                if "json" in params:
+                    contents = {"species": species_list,
+                                "total": total_number,
+                                "limit": limit_number}
+                else:
+                    for element in species_list:
+                        species += f"·{element.capitalize()}<br>"
+                    contents = read_html_file(path[1:] + ".html").\
+                        render(context={"species": species,
+                                        "total": total_number,
+                                        "limit": limit_number})
+
+
+            except ValueError:
                 pass
-            elif len(params) == 0:
-                limit_number = total_number
-            elif len(params) == 2 and "json" in params:
-                pass
-            else:
-                contents = Path("./html/" + "error.html").read_text()
-                self.send_response(404)
 
-            species_list = []
-            for element in range(0, limit_number):
-                species_list.append(species_dict_2[element]["common_name"])
-            species = ""
-
-            if "json" in params:
-                contents = {"species": species_list,
-                            "total": total_number,
-                            "limit": limit_number}
-            else:
-                for element in species_list:
-                    species += f"·{element.capitalize()}<br>"
-                contents = read_html_file(path[1:] + ".html").\
-                    render(context={"species": species,
-                                    "total": total_number,
-                                    "limit": limit_number})
 
         elif path == "/karyotype":
             if len(params) == 1 or (len(params) == 2 and "json" in params):
