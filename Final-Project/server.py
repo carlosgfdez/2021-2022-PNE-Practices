@@ -59,33 +59,45 @@ def connect_web(URL, ENDPOINT):
     return data
 
 def genes_information(gene_1):
-    if gene_1 in GENES:
-        SERVER = 'rest.ensembl.org'
-        ENDPOINT = '/sequence/id'
-        RESOURCE = f'/{GENES[gene_1]}?content-type=application/json'
-        URL = SERVER + ENDPOINT + RESOURCE
-        CONTENT = ENDPOINT + RESOURCE
+    SERVER = 'rest.ensembl.org'
+    ENDPOINT = '/sequence/id'
+    RESOURCE = f'/{GENES[gene_1]}?content-type=application/json'
+    URL = SERVER + ENDPOINT + RESOURCE
+    CONTENT = ENDPOINT + RESOURCE
 
-        conn = http.client.HTTPConnection(SERVER)
+    conn = http.client.HTTPConnection(SERVER)
 
-        try:
-            conn.request("GET", CONTENT)
-        except ConnectionRefusedError:
-            print("ERROR! Cannot connect to the Server")
-            exit()
-        response = conn.getresponse()
+    try:
+        conn.request("GET", CONTENT)
+    except ConnectionRefusedError:
+        print("ERROR! Cannot connect to the Server")
+        exit()
+    response = conn.getresponse()
 
-        if response.status == HTTPStatus.OK:
-            print(f"Response received: {response.status} {response.reason}")
-            print()
+    if response.status == HTTPStatus.OK:
+        print(f"Response received: {response.status} {response.reason}")
+        print()
 
-            data_1 = response.read().decode("utf-8")
-            data = json.loads(data_1)
-            return data
+        data_1 = response.read().decode("utf-8")
+        data = json.loads(data_1)
+        return data
+
+def gene_list(chromo, start, end):
+    endpoint = '/overlap/region/human/'
+    params = f'{chromo}:{start}-{end}?content-type=application/json;feature=gene;feature=transcript;feature=cds;feature=exon'
+    url = endpoint + params
+
+    conn = http.client.HTTPConnection(SERVER)
+    conn.request("GET", url)
+    response = conn.getresponse()
+    if response.status == HTTPStatus.OK:
+        print(f"Response received: {response.status} {response.reason}")
+        print()
+        data_1 = response.read().decode("utf-8")
+        data = json.loads(data_1)
+    return data
 
 
-    else:
-        print("Choose a correct gene")
 
 
 socketserver.TCPServer.allow_reuse_address = True
@@ -231,11 +243,14 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
 
         elif path == "/geneList":
             if len(params) == 3:
-                chromosome_number = params['chromo'][0]
-                print(chromosome_number)
+                chromo = params['chromo'][0]  # Comment
+                start = int(params['start'][0])  # Comment
+                end = int(params['end'][0])  # Comment
+                data = gene_list(chromo, start, end)
 
                 contents = read_html_file(path[1:] + ".html"). \
-                    render(context={"gene": chromosome_number})
+                    render(context={"data": data})
+                self.send_response(200)
             else:
                 contents = Path("./html/" + "error.html").read_text()
                 self.send_response(404)
