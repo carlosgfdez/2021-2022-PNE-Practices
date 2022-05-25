@@ -83,8 +83,6 @@ def genes_information(gene_1):
 
 
 
-
-
 socketserver.TCPServer.allow_reuse_address = True
 
 
