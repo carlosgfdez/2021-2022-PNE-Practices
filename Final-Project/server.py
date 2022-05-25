@@ -3,13 +3,11 @@ import socketserver
 import termcolor
 from pathlib import Path
 from urllib.parse import urlparse, parse_qs
-from Sequence import Seq
 import jinja2 as j
 import http.client
 import json
 from Sequence import Seq
 from http import HTTPStatus
-import os
 
 
 SERVER = "rest.ensembl.org"
@@ -39,10 +37,10 @@ def read_template_html_file(filename):
     return content
 
 
-def connect_web(URL, ENDPOINT):
+def connect_web(ENDPOINT, PARAMS):
     conn = http.client.HTTPConnection(SERVER)
     PARAMETER = "?content-type=application/json"
-    CONTENT = URL + PARAMETER + ENDPOINT
+    CONTENT = ENDPOINT + PARAMETER + PARAMS
     try:
         conn.request("GET", CONTENT)
     except ConnectionRefusedError:
@@ -123,7 +121,6 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 render(context={"species": species,
                                 "total": total_number,
                                 "limit": limit_number})
-            self.send_response(200)
 
 
         elif path == "/karyotype":
@@ -137,7 +134,6 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 print(karyo)
                 contents = read_html_file(path[1:] + ".html").\
                     render(context={'karyotype': karyo})
-                self.send_response(200)
 
             else:
                 contents = Path("./html/" + "error.html").read_text()
@@ -156,7 +152,6 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
 
                 contents = read_html_file(path[1:] + ".html"). \
                     render(context={'length': chromo_length})
-                self.send_response(200)
 
             else:
                 contents = Path("./html/" + "error.html").read_text()
@@ -172,7 +167,6 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 contents = read_html_file(path[1:] + ".html"). \
                     render(context={"gene": user_gene,
                                     "sequence": sequence})
-                self.send_response(200)
             else:
                 contents = Path("./html/" + "error.html").read_text()
                 self.send_response(404)
@@ -198,7 +192,6 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                                     "id": id_info,
                                     "length": sequence_length,
                                     "name": chromosome_name})
-                self.send_response(200)
             else:
                 contents = Path("./html/" + "error.html").read_text()
                 self.send_response(404)
@@ -218,7 +211,6 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                                     "length": length,
                                     "bases": bases,
                                     "percentage": percentage_bases})
-                self.send_response(200)
             else:
                 contents = Path("./html/" + "error.html").read_text()
                 self.send_response(404)
@@ -254,7 +246,6 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                     chromo_info += f"- {e}<br>"
                 contents = read_html_file(path[1:] + ".html"). \
                     render(context={"name": chromo,"info": chromo_info})
-                self.send_response(200)
             else:
                 contents = Path("./html/" + "error.html").read_text()
                 self.send_response(404)
@@ -263,16 +254,16 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
             contents = Path("./html/" + "error.html").read_text()
             self.send_response(404)
 
-        if "json" in params.keys():
-            contents = json.dumps(contents)
-            self.send_header('Content-Type', 'application/json')
+        self.send_response(200)  # -- Status line: OK!
 
-        else:
-            self.send_header('Content-Type', 'text/html')
+        # Define the content-type header:
+        self.send_header('Content-Type', 'text/html')
         self.send_header('Content-Length', len(contents.encode()))
 
+        # The header is finished
         self.end_headers()
 
+        # Send the response message
         self.wfile.write(contents.encode())
 
         return
