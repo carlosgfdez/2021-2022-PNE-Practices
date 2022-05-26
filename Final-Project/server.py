@@ -311,15 +311,13 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 else:
                     contents = read_html_file("error.html").\
                         render()
-
-
         else:
             contents = Path("./html/" + "error.html").read_text()
             self.send_response(404)
 
         self.send_response(200)  # -- Status line: OK!
 
-        if "json" in params.keys():
+        if "json" in params:
             contents = json.dumps(contents)
             self.send_header("Content-Type", "application/json")
 
