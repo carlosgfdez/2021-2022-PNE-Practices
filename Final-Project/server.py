@@ -57,9 +57,9 @@ def connect_web(ENDPOINT, PARAMS):
     return data
 
 def genes_information(gene_1):
-    SERVER = 'rest.ensembl.org'
-    ENDPOINT = '/sequence/id'
-    RESOURCE = f'/{GENES[gene_1]}?content-type=application/json'
+    SERVER = "rest.ensembl.org"
+    ENDPOINT = "/sequence/id"
+    RESOURCE = f"/{GENES[gene_1]}?content-type=application/json"
     URL = SERVER + ENDPOINT + RESOURCE
     CONTENT = ENDPOINT + RESOURCE
 
@@ -104,7 +104,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 total_number = len(species_dict_2)
 
                 if len(params) == 1 or (len(params) == 2 and "json" in params):
-                    limit_number = int(params['limit'][0])
+                    limit_number = int(params["limit"][0])
                 elif len(params) == 0:
                     limit_number = total_number
                 else:
@@ -138,18 +138,18 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
         elif path == "/karyotype":
             try:
                 if len(params) == 1 or (len(params) == 2 and "json" in params):
-                    specie_name = params['specie'][0]
+                    specie_name = params["specie"][0]
                     karyotype_dict_1 = connect_web("info/assembly/" + specie_name, "")
                     karyotype_dict_2 = karyotype_dict_1["karyotype"]
                     karyo = ""
 
                     if "json" in params:
-                        contents = {'karyotype': karyotype_dict_2}
+                        contents = {"karyotype": karyotype_dict_2}
                     else:
                         for element in karyotype_dict_2:
                             karyo += f"·{element}<br>"
                         contents = read_html_file(path[1:] + ".html").\
-                            render(context={'karyotype': karyo})
+                            render(context={"karyotype": karyo})
 
                 else:
                     contents = Path("./html/" + "error.html").read_text()
@@ -164,8 +164,8 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
         elif path == "/chromosomeLength":
             try:
                 if len(params) == 2 or (len(params) == 3 and "json" in params):
-                    specie_name = params['specie'][0]
-                    chromosome_number = params['chromo'][0]
+                    specie_name = params["specie"][0]
+                    chromosome_number = params["chromo"][0]
                     chromo_dict_1 = connect_web("info/assembly/" + specie_name, "")
                     chromo_dict_2 = chromo_dict_1["top_level_region"]
                     chromo_length = 0
@@ -181,11 +181,11 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                                 render()
                     else:
                         if "json" in params:
-                            contents = {'length': chromo_length}
+                            contents = {"length": chromo_length}
 
                         else:
                             contents = read_html_file(path[1:] + ".html"). \
-                                render(context={'length': chromo_length})
+                                render(context={"length": chromo_length})
 
                 else:
                     contents = Path("./html/" + "error.html").read_text()
@@ -199,9 +199,9 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
 
         elif path == "/geneSeq":
             if len(params) == 1 or (len(params) == 2 and "json" in params):
-                user_gene = params['gene'][0]
+                user_gene = params["gene"][0]
                 info_dict = genes_information(user_gene)
-                sequence = info_dict['seq']
+                sequence = info_dict["seq"]
                 if "json" in params:
                     contents = {"gene": user_gene,
                                 "sequence": sequence}
@@ -216,12 +216,12 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
 
         elif path == "/geneInfo":
             if len(params) == 1 or (len(params) == 2 and "json" in params):
-                user_gene = params['gene'][0]
+                user_gene = params["gene"][0]
                 info_dict = genes_information(user_gene)
-                sequence = info_dict['seq']
-                id_info = info_dict['id']
+                sequence = info_dict["seq"]
+                id_info = info_dict["id"]
                 sequence_length = len(sequence)
-                chromosome_info_1 = info_dict['desc']
+                chromosome_info_1 = info_dict["desc"]
                 chromosome_info_2 = chromosome_info_1.split(":")
                 chromosome_name = chromosome_info_2[1]
                 chromosome_start = chromosome_info_2[3]
@@ -247,9 +247,9 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
 
         elif path == "/geneCalc":
             if len(params) == 1 or (len(params) == 2 and "json" in params):
-                user_gene = params['gene'][0]
+                user_gene = params["gene"][0]
                 info_dict = genes_information(user_gene)
-                sequence = info_dict['seq']
+                sequence = info_dict["seq"]
                 length = Seq(sequence).len()
                 bases = Seq(sequence).frequent_base()[1]
                 percentage_bases = Seq(sequence).info()
@@ -273,9 +273,9 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
         elif path == "/geneList":
             try:
                 if len(params) == 3 or (len(params) == 4 and "json" in params):
-                    chromo = params['chromo'][0]
-                    start = params['start'][0]
-                    end = params['end'][0]
+                    chromo = params["chromo"][0]
+                    start = params["start"][0]
+                    end = params["end"][0]
                     mixed_info = chromo + ":" + start + "-" + end
                     chromo_dict = connect_web("phenotype/region/homo_sapiens/" + mixed_info, ";feature_type=Variation")
 
@@ -287,8 +287,8 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                         list_1.append(chromo_dict[element]["phenotype_associations"])
                         for e1 in list_1:
                             for e2 in e1:
-                                if 'attributes' in e2:
-                                    list_2.append(e2['attributes'])
+                                if "attributes" in e2:
+                                    list_2.append(e2["attributes"])
                                     for i in list_2:
                                         for u1, u2 in i.items():
                                             if u1 == "associated_gene":
@@ -321,11 +321,11 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
 
         if "json" in params.keys():
             contents = json.dumps(contents)
-            self.send_header('Content-Type', 'application/json')
+            self.send_header("Content-Type", "application/json")
 
         else:
-            self.send_header('Content-Type', 'text/html')
-        self.send_header('Content-Length', len(contents.encode()))
+            self.send_header("Content-Type", "text/html")
+        self.send_header("Content-Length", len(contents.encode()))
 
         # The header is finished
         self.end_headers()
