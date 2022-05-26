@@ -53,7 +53,6 @@ def connect_web(ENDPOINT, PARAMS):
 
         data_1 = response.read().decode("utf-8")
         data = json.loads(data_1)
-        print(data)
     return data
 
 def genes_information(gene_1):
