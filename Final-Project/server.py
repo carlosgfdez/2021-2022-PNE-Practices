@@ -165,32 +165,34 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
             try:
                 if len(params) == 2 or (len(params) == 3 and "json" in params):
                     specie_name = params["specie"][0]
-                    chromosome_number = params["chromo"][0]
+                    chromosome_number = int(params["chromo"][0])
                     chromo_dict_1 = connect_web("info/assembly/" + specie_name, "")
                     chromo_dict_2 = chromo_dict_1["top_level_region"]
                     chromo_length = 0
+                    chromo_list = []
 
-                    for e in range(0,len(chromo_dict_2)):
-                        if chromo_dict_2[e]["name"] == chromosome_number:
-                            chromo_length += int(chromo_dict_2[e]["length"])
-                    if chromo_length == 0:
-                        if "json" in params:
-                            contents = {"Error": "An error ocurred. Try again with an integer"}
-                        else:
-                            contents = read_html_file("error.html"). \
-                                render()
+                    if chromosome_number < 0:
+                        contents = Path("./html/" + "error.html").read_text()
+                        self.send_response(404)
                     else:
-                        if "json" in params:
-                            contents = {"length": chromo_length}
-
+                        for e in range(0, len(chromo_dict_2)):
+                            if int(chromo_dict_2[e]["length"]) > chromosome_number:
+                                chromo_list.append(chromo_dict_2[e]["name"])
+                        if len(chromo_list) == 0:
+                            contents = Path("./html/" + "error.html").read_text()
+                            self.send_response(404)
                         else:
-                            contents = read_html_file(path[1:] + ".html"). \
-                                render(context={"length": chromo_length})
+                            if "json" in params:
+                                contents = {"names": chromo_list}
+
+                            else:
+                                contents = read_html_file(path[1:] + ".html"). \
+                                    render(context={"names": chromo_list})
 
                 else:
                     contents = Path("./html/" + "error.html").read_text()
                     self.send_response(404)
-            except Exception:
+            except ValueError:
                 if "json" in params:
                     contents = {"Error": "An error ocurred. Try again with a valid specie."}
                 else:
