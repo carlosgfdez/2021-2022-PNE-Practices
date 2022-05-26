@@ -170,6 +170,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                     chromo_dict_2 = chromo_dict_1["top_level_region"]
                     chromo_length = 0
                     chromo_list = []
+                    chromo_info = ""
 
                     if chromosome_number < 0:
                         contents = Path("./html/" + "error.html").read_text()
@@ -186,8 +187,11 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                                 contents = {"names": chromo_list}
 
                             else:
+                                for element in chromo_list:
+                                    chromo_info += f"- {element}<br>"
+
                                 contents = read_html_file(path[1:] + ".html"). \
-                                    render(context={"names": chromo_list})
+                                    render(context={"names": chromo_info})
 
                 else:
                     contents = Path("./html/" + "error.html").read_text()
